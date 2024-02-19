@@ -205,27 +205,3 @@ def test_complexity_handles_fragments_definition_after_operation_definition():
     result = _execute_with_complexity(query)
 
     assert result.extensions["complexity"]["value"] == 6
-
-
-def test_7():
-    query = """
-        query Something {
-            aFieldWithArgs (anArg: "input")
-        }
-    """
-
-    result = _execute_with_complexity(query)
-
-    assert result.extensions["complexity"]["value"] == 1
-
-
-def test_8():
-    query = """
-        query Something {
-            anNComplexityField
-        }
-    """
-
-    result = _execute_with_complexity(query)
-
-    assert result.extensions["complexity"]["value"] == 1

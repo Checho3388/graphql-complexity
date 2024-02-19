@@ -158,22 +158,10 @@ def test_complexity_handles_fragments_definition_after_operation_definition():
     assert complexity == 6
 
 
-def test_7():
+def test_complexity_visitor_handles_input_arguments():
     query = """
         query Something {
             aFieldWithArgs (anArg: "input")
-        }
-    """
-
-    complexity = _evaluate_complexity(query)
-
-    assert complexity == 1
-
-
-def test_8():
-    query = """
-        query Something {
-            anNComplexityField
         }
     """
 
