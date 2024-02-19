@@ -19,7 +19,7 @@ def test_root_fields_do_not_multiply():
     query = """
         query Something {
             a_field
-        }   
+        }
     """
 
     complexity = _evaluate_complexity_with_simple_estimator(query, 3, 10)
@@ -32,7 +32,7 @@ def test_root_fields_complexity_is_added():
         query Something {
             a_field
             another_field
-        }   
+        }
     """
 
     complexity = _evaluate_complexity_with_simple_estimator(query, 5, 1)
@@ -47,7 +47,7 @@ def test_complexity_multiplies_with_objects():
                 a_field
                 another_field
             }
-        }   
+        }
     """
 
     complexity = _evaluate_complexity_with_simple_estimator(query, 1, 10)
@@ -63,7 +63,7 @@ def test_complexity_multiplies_two_levels():
                     a_field
                 }
             }
-        }   
+        }
     """
 
     complexity = _evaluate_complexity_with_simple_estimator(query, 1, 10)
@@ -80,7 +80,7 @@ def test_complexity_multiplies_with_depth():
                 }
                 another_field
             }
-        }   
+        }
     """
 
     complexity = _evaluate_complexity_with_simple_estimator(query, 1, 10)

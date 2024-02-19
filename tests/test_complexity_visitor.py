@@ -17,7 +17,7 @@ def test_one_field_simple_complexity_calculation():
     query = """
         query Something {
             a1ComplexityField
-        }   
+        }
     """
 
     complexity = _evaluate_complexity(query)
@@ -30,7 +30,7 @@ def test_two_fields_simple_complexity_calculation():
         query Something {
             a1ComplexityField
             alias: a1ComplexityField
-        }   
+        }
     """
 
     complexity = _evaluate_complexity(query)
@@ -51,7 +51,7 @@ def test_complexity_visitor_respects_graphql_result_data():
                 aStr
                 anInt
             }
-        }   
+        }
     """
 
     complexity = _evaluate_complexity(query)
@@ -72,7 +72,7 @@ def test_complexity_with_a_complex_query():
                 aStr
                 anInt
             }
-        }   
+        }
     """
 
     complexity = _evaluate_complexity(query, SimpleEstimator(0, 0))
@@ -89,7 +89,7 @@ def test_complexity_works_with_multiple_operation_definitions():
         query SomethingElse {
             a1ComplexityField
             alias: a1ComplexityField
-        }   
+        }
     """
 
     complexity = _evaluate_complexity(query)
@@ -162,7 +162,7 @@ def test_7():
     query = """
         query Something {
             aFieldWithArgs (anArg: "input")
-        }   
+        }
     """
 
     complexity = _evaluate_complexity(query)
@@ -174,7 +174,7 @@ def test_8():
     query = """
         query Something {
             anNComplexityField
-        }   
+        }
     """
 
     complexity = _evaluate_complexity(query)
