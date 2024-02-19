@@ -34,7 +34,7 @@ class SimpleEstimator(ComplexityEstimator):
         And the total complexity will be 3.
     """
 
-    def __init__(self, complexity=1, multiplier=1):
+    def __init__(self, complexity: int = 1, multiplier: int = 1):
         self.__complexity_constant = complexity
         self.__multiplier_constant = multiplier
         super().__init__()
@@ -65,6 +65,7 @@ class DirectivesVisitor(Visitor):
 
 
 DEFAULT_COMPLEXITY_DIRECTIVE_NAME = "complexity"
+DEFAULT_COMPLEXITY_VALUE = 1
 
 
 class DirectivesEstimator(ComplexityEstimator):
@@ -91,11 +92,15 @@ class DirectivesEstimator(ComplexityEstimator):
     """
 
     def __init__(
-        self, schema: str, directive_name: str = DEFAULT_COMPLEXITY_DIRECTIVE_NAME
+        self,
+        schema: str,
+        directive_name: str = DEFAULT_COMPLEXITY_DIRECTIVE_NAME,
+        missing_complexity: int = DEFAULT_COMPLEXITY_VALUE,
     ):
         self.__complexity_map = {}
         self.__schema = schema
         self.__directive_name = directive_name
+        self.__missing_complexity = int(missing_complexity)
         self.parse_schema()
         super().__init__()
 
@@ -106,7 +111,10 @@ class DirectivesEstimator(ComplexityEstimator):
         self.__complexity_map = visitor.complexity_map
 
     def get_field_complexity(self, node, key, parent, path, ancestors) -> int:
-        return self.__complexity_map.get(node.name.value, 1)
+        return self.__complexity_map.get(
+            node.name.value,
+            self.__missing_complexity
+        )
 
     def get_field_multiplier(self, node, key, parent, path, ancestors) -> int:
         return 1
