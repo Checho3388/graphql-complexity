@@ -10,7 +10,8 @@ based on the number of fields requested in the operation and the depth of the qu
 
 ```python
 from graphql import parse, visit
-from graphql_complexity import ComplexityVisitor, SimpleEstimator
+from graphql_complexity.visitor import ComplexityVisitor
+from graphql_complexity.estimators import SimpleEstimator
 
 
 query = """
@@ -62,13 +63,13 @@ query {
 ```
 As the complexity and multiplier are constant, the complexity of the fields will be:
 
-| Field | Complexity  |
-|-------|-------------|
-| user | `2 * 1`       |
-| name | `2 * (2 * 1)` |
+| Field | Complexity    |
+|-------|---------------|
+| user  | `1`           |
+| name  | `2 * (2 * 1)` |
 | email | `2 * (2 * 1)` |
 
-And the total complexity will be `3`.
+And the total complexity will be `5`.
 
 ### Define fields complexity using schema directives
 
@@ -89,6 +90,7 @@ directive @complexity(
 type Query {
   oneField: String @complexity(value: 5)
   otherField: String @complexity(value: 1)
+  withoutDirective: String
 }
 """
 
@@ -100,17 +102,19 @@ Given the schema from above and the following query:
 query {
     oneField
     otherField
+    withoutDirective
 }
 ```
 
 The complexity of the fields will be:
 
-| Field | Complexity |
-|-------|------------|
-| oneField | `5` |
-| otherField | `1` |
+| Field            | Complexity | Comment                                                                                           |
+|------------------|------------|---------------------------------------------------------------------------------------------------|
+| oneField         | `5`        |                                                                                                   |
+| otherField       | `1`        |                                                                                                   |
+| withoutDirective | `1`        | The default complexity for fields without directive is `1`, this can be modified by parameters.   |
 
-And the total complexity will be `6`.
+And the total complexity will be `7`.
 
 ### Create a custom estimator
 This option allows to define a custom estimator to compute the complexity of a field using the `ComplexityEstimator` interface. For example:
