@@ -26,6 +26,8 @@ jobs:
         
     - name: Install poetry
       uses: abatilo/actions-poetry@v2
+      with:
+          poetry-version: ${{ matrix.poetry-version }}
       
     - uses: actions/cache@v3
       name: Define a cache for the virtual environment based on the dependencies lock file
@@ -34,7 +36,7 @@ jobs:
         key: venv-${{ hashFiles('poetry.lock') }}
         
     - name: Install the project dependencies
-      run: poetry install
+      run: poetry install --extras "strawberry-graphql"
       
     - name: Lint with flake8
       run: |
