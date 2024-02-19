@@ -32,9 +32,17 @@ if complexity > 10:
 ```
 
 ## Estimators
+In order to get the complexity of a query, an estimator needs to be defined. The main responsibility of
+the estimator is to give each node an integer value representing its complexity and (optionally) a
+multiplier that reflects the complexity in relation to the depth of the query.
+
+There are two built-in estimators, plus the capability to create any new estimator by
+implementing the `ComplexityEstimator` interface.
+
 ### Estimate fields complexity based on constants for complexity and multiplier
 
-Assigns a complexity value to each field and multiplies it by the depth of the query.
+This estimator assigns a **constant** complexity value to each field and multiplies
+it by another **constant** which is propagated along the depth of the query.
 
 ```python
 from graphql_complexity.estimators import SimpleEstimator
@@ -126,6 +134,12 @@ class CustomEstimator(ComplexityEstimator):
 The library is compatible with the following GraphQL libraries:
 
 ### Strawberry
+The library is compatible with [strawberry-graphql](https://pypi.org/project/strawberry-graphql/). 
+To use the library with strawberry-graphql, you need to install the library with the `strawberry-graphql` extra.
+```shell
+poetry install --extras strawberry-graphql
+```
+
 To use the library with [strawberry-graphql](https://pypi.org/project/strawberry-graphql/), you need to use the `build_complexity_extension` method to build
 the complexity extension and add it to the schema. This method receives an estimator and returns a complexity 
 extension that can be added to the schema.
@@ -151,8 +165,3 @@ of the built-in estimators or a custom estimator.
 ## Credits
 
 Estimators idea was heavily inspired by [graphql-query-complexity](https://github.com/slicknode/graphql-query-complexity).
-
-
-## Contribute
-
-Read the CONTRIBUTING.md file.
