@@ -1,7 +1,7 @@
 from graphql import parse, visit
 
-from src.estimators import SimpleEstimator
-from src.visitor import ComplexityVisitor
+from graphql_complexity.estimators import SimpleEstimator
+from graphql_complexity.visitor import ComplexityVisitor
 
 
 def _evaluate_complexity(query: str, estimator=None):

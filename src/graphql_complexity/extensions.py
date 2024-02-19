@@ -3,8 +3,8 @@ from typing import Type
 from graphql import visit
 
 from strawberry.extensions import SchemaExtension
-from src.estimators import ComplexityEstimator, SimpleEstimator
-from src.visitor import ComplexityVisitor
+from graphql_complexity.estimators import ComplexityEstimator, SimpleEstimator
+from graphql_complexity.visitor import ComplexityVisitor
 
 
 def build_complexity_extension(

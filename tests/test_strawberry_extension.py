@@ -2,8 +2,8 @@ from typing import Iterable
 
 import strawberry
 
-from src.estimators import SimpleEstimator
-from src.extensions import build_complexity_extension
+from graphql_complexity.estimators import SimpleEstimator
+from graphql_complexity.extensions import build_complexity_extension
 
 
 @strawberry.type

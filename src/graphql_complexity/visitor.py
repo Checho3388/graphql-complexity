@@ -2,7 +2,7 @@ import dataclasses
 
 from graphql import Visitor, OperationDefinitionNode, FragmentDefinitionNode
 
-from src.estimators import ComplexityEstimator
+from graphql_complexity.estimators import ComplexityEstimator
 
 UNNAMED_OPERATION = "UnnamedOperation"
 
