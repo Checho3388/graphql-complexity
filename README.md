@@ -9,10 +9,7 @@ The library uses the query complexity algorithm to compute the complexity of a G
 based on the number of fields requested in the operation and the depth of the query.
 
 ```python
-from graphql import parse, visit
-from graphql_complexity.visitor import ComplexityVisitor
-from graphql_complexity.estimators import SimpleEstimator
-
+from graphql_complexity import (get_complexity, SimpleEstimator)
 
 query = """
     query SomeQuery {
@@ -23,11 +20,7 @@ query = """
     }
 """
 
-ast = parse(query)
-visitor = ComplexityVisitor(estimator=SimpleEstimator(complexity=1, multiplier=1))
-visit(ast, visitor)
-
-complexity = visitor.evaluate()
+complexity = get_complexity(query, estimator=SimpleEstimator(complexity=1, multiplier=1))
 if complexity > 10:
     raise Exception("Query is too complex")
 ```
@@ -46,10 +39,10 @@ This estimator assigns a **constant** complexity value to each field and multipl
 it by another **constant** which is propagated along the depth of the query.
 
 ```python
-from graphql_complexity.estimators import SimpleEstimator
+from graphql_complexity import SimpleEstimator
 
 
-estimator = SimpleEstimator(complexity=1, multiplier=2)
+estimator = SimpleEstimator(complexity=2, multiplier=1)
 ```
 
 Given the following query:
@@ -69,7 +62,7 @@ As the complexity and multiplier are constant, the complexity of the fields will
 | name  | `2 * (2 * 1)` |
 | email | `2 * (2 * 1)` |
 
-And the total complexity will be `5`.
+And the total complexity will be `6`.
 
 ### Define fields complexity using schema directives
 
@@ -79,7 +72,7 @@ It also supports the `@complexity` directive to assign a custom complexity value
 This approach requires to provide the schema to the estimator.
 
 ```python
-from graphql_complexity.estimators import DirectivesEstimator
+from graphql_complexity import DirectivesEstimator
 
 
 schema = """
@@ -120,7 +113,7 @@ And the total complexity will be `7`.
 This option allows to define a custom estimator to compute the complexity of a field using the `ComplexityEstimator` interface. For example:
 
 ```python
-from graphql_complexity.estimators import ComplexityEstimator
+from graphql_complexity import ComplexityEstimator
 
 
 class CustomEstimator(ComplexityEstimator):
@@ -138,6 +131,8 @@ class CustomEstimator(ComplexityEstimator):
 The library is compatible with the following GraphQL libraries:
 
 ### Strawberry
+
+
 The library is compatible with [strawberry-graphql](https://pypi.org/project/strawberry-graphql/). 
 To use the library with strawberry-graphql, you need to install the library with the `strawberry-graphql` extra.
 ```shell
@@ -150,7 +145,7 @@ extension that can be added to the schema.
 
 ```python
 import strawberry
-from graphql_complexity.extensions import build_complexity_extension
+from graphql_complexity.extensions.strawberry_graphql import build_complexity_extension
 
 @strawberry.type
 class Query:
