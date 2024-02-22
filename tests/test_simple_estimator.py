@@ -1,7 +1,6 @@
 import pytest
 
-from graphql_complexity.estimators import SimpleEstimator
-from graphql_complexity.services import get_complexity
+from graphql_complexity import SimpleEstimator, get_complexity
 
 
 def _evaluate_complexity_with_simple_estimator(

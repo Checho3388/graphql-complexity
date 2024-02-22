@@ -1,13 +1,10 @@
 from typing import Type
 
-from graphql import GraphQLError, visit
+from graphql import GraphQLError
 from strawberry.extensions import SchemaExtension
 
-from graphql_complexity import (
-    ComplexityEstimator,
-    ComplexityVisitor,
-    SimpleEstimator
-)
+from graphql_complexity.estimators import ComplexityEstimator, SimpleEstimator
+from graphql_complexity.evaluator.complexity import get_ast_complexity
 
 
 def build_complexity_extension(
@@ -23,10 +20,10 @@ def build_complexity_extension(
         def on_validate(
             self,
         ):
-            self.visitor = ComplexityVisitor(estimator=estimator)
-            visit(self.execution_context.graphql_document, self.visitor)
-
-            self.estimated_complexity = self.visitor.evaluate()
+            self.estimated_complexity = get_ast_complexity(
+                ast=self.execution_context.graphql_document,
+                estimator=estimator
+            )
 
             if max_complexity and self.estimated_complexity > max_complexity:
                 error = GraphQLError(

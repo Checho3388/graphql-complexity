@@ -1,18 +1,16 @@
-from graphql import parse, visit
-
-from graphql_complexity.estimators import DirectivesEstimator, SimpleEstimator
-from graphql_complexity.visitor import ComplexityVisitor
+from graphql_complexity import (
+    DirectivesEstimator,
+    SimpleEstimator,
+    get_complexity
+)
 
 
 def _evaluate_complexity_with_simple_estimator(
     query: str, field_complexity=1, multiplier=1
 ):
-    ast = parse(query)
     estimator = SimpleEstimator(field_complexity, multiplier)
-    visitor = ComplexityVisitor(estimator=estimator)
-    visit(ast, visitor)
 
-    return visitor.evaluate()
+    return get_complexity(query, estimator)
 
 
 def test_root_fields_complexity_is_added():
@@ -34,12 +32,9 @@ def _evaluate_complexity_with_directives_estimator(
     query: str,
     schema: str,
 ):
-    ast = parse(query)
     estimator = DirectivesEstimator(schema)
-    visitor = ComplexityVisitor(estimator=estimator)
-    visit(ast, visitor)
 
-    return visitor.evaluate()
+    return get_complexity(query, estimator)
 
 
 def test_simple_query_with_directive_estimator():

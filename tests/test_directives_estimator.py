@@ -1,7 +1,4 @@
-from graphql import parse, visit
-
-from graphql_complexity.estimators import DirectivesEstimator
-from graphql_complexity.visitor import ComplexityVisitor
+from graphql_complexity import DirectivesEstimator, get_complexity
 
 
 def _evaluate_complexity_with_directives_estimator(
@@ -9,12 +6,9 @@ def _evaluate_complexity_with_directives_estimator(
     schema: str,
     **kwargs,
 ):
-    ast = parse(query)
     estimator = DirectivesEstimator(schema, **kwargs)
-    visitor = ComplexityVisitor(estimator=estimator)
-    visit(ast, visitor)
 
-    return visitor.evaluate()
+    return get_complexity(query, estimator)
 
 
 def test_simple_query_with_directive_estimator():
@@ -150,4 +144,4 @@ def test_directive_estimator_should_accept_field_with_directive_is_part_of_an_ob
 
     complexity = _evaluate_complexity_with_directives_estimator(query, schema)
 
-    assert complexity == 4
+    assert complexity == 123

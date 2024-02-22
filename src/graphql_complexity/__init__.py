@@ -1,12 +1,13 @@
+from graphql_complexity.evaluator.complexity import get_complexity
+
 from .estimators import (
     ComplexityEstimator,
     DirectivesEstimator,
     SimpleEstimator
 )
-from .visitor import ComplexityVisitor
 
 __all__ = [
-    "ComplexityVisitor",
+    "get_complexity",
     "SimpleEstimator",
     "ComplexityEstimator",
     "DirectivesEstimator",

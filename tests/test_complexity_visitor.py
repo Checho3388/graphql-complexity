@@ -1,17 +1,12 @@
 import pytest
-from graphql import parse, visit
 
-from graphql_complexity.estimators import SimpleEstimator
-from graphql_complexity.visitor import ComplexityVisitor
+from graphql_complexity import SimpleEstimator, get_complexity
+from graphql_complexity.evaluator.visitor import ComplexityVisitor
 
 
 def _evaluate_complexity(query: str, estimator=None):
-    ast = parse(query)
     estimator = estimator or SimpleEstimator(1, 1)
-    visitor = ComplexityVisitor(estimator=estimator)
-    visit(ast, visitor)
-
-    return visitor.evaluate()
+    return get_complexity(query, estimator)
 
 
 def test_one_field_simple_complexity_calculation():
