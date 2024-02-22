@@ -4,6 +4,15 @@ Python library to compute the complexity of a GraphQL operation
 ![Unit Tests](https://github.com/Checho3388/graphql-complexity/actions/workflows/python-package.yml/badge.svg)
 [![PyPI](https://img.shields.io/pypi/v/graphql-complexity?label=pypi%20package)](https://pypi.org/project/graphql-complexity/)
 
+## Installation
+The library can be installed using pip:
+```shell
+pip install graphql-complexity
+```
+To use `strawberry-graphql` integration, you need to install the library with the `strawberry-graphql` extra.
+```shell
+pip install graphql-complexity[strawberry-graphql]
+```
 
 ## Usage
 The library uses the query complexity algorithm to compute the complexity of a GraphQL operation. The algorithm is 
