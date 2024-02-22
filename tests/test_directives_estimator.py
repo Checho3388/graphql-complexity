@@ -7,9 +7,10 @@ from graphql_complexity.visitor import ComplexityVisitor
 def _evaluate_complexity_with_directives_estimator(
     query: str,
     schema: str,
+    **kwargs,
 ):
     ast = parse(query)
-    estimator = DirectivesEstimator(schema)
+    estimator = DirectivesEstimator(schema, **kwargs)
     visitor = ComplexityVisitor(estimator=estimator)
     visit(ast, visitor)
 
@@ -40,3 +41,113 @@ def test_simple_query_with_directive_estimator():
     complexity = _evaluate_complexity_with_directives_estimator(query, schema)
 
     assert complexity == 5
+
+
+def test_directive_estimator_accepts_to_set_directive_name():
+    schema = """directive @cost(
+      value: Int!
+    ) on FIELD_DEFINITION
+
+    type Query {
+      oneField: String @cost(value: 3)
+      otherField: String @cost(value: 1)
+      withoutDirective: String
+    }
+    """
+
+    query = """
+        query Something {
+            oneField
+            otherField
+            withoutDirective
+        }
+    """
+
+    complexity = _evaluate_complexity_with_directives_estimator(
+        query, schema, directive_name="cost"
+    )
+
+    assert complexity == 5
+
+
+def test_():
+    schema = """directive @complexity(
+      # The complexity value for the field
+      value: Int!
+
+      # Optional multipliers
+      multipliers: [String!]
+    ) on FIELD_DEFINITION
+
+    type Query {
+      # Fixed complexity of 5
+      someField: String @complexity(value: 5)
+    }
+    """
+
+    query = """
+        query Something {
+            someField
+        }
+    """
+
+    complexity = _evaluate_complexity_with_directives_estimator(query, schema)
+
+    assert complexity == 5
+
+
+# Add more unit tests regarding the directive estimator
+def test_directive_estimator_accepts_to_set_missing_complexity():
+    schema = """directive @complexity(
+      # The complexity value for the field
+      value: Int!
+    ) on FIELD_DEFINITION
+
+    type Query {
+      oneField: String @complexity(value: 3)
+      otherField: String @complexity(value: 1)
+      withoutDirective: String
+    }
+    """
+
+    query = """
+        query Something {
+            oneField
+            otherField
+            withoutDirective
+        }
+    """
+
+    complexity = _evaluate_complexity_with_directives_estimator(
+        query, schema, missing_complexity=10
+    )
+
+    assert complexity == 14
+
+
+def test_directive_estimator_should_accept_field_with_directive_is_part_of_an_object_with_directive():
+    schema = """directive @complexity(
+      # The complexity value for the field
+      value: Int!
+    ) on FIELD_DEFINITION
+
+    type Query {
+      oneField: Obj @complexity(value: 3)
+    }
+
+    type Obj {
+      otherField: String @complexity(value: 120)
+    }
+    """
+
+    query = """
+        query Something {
+            oneField {
+                otherField
+            }
+        }
+    """
+
+    complexity = _evaluate_complexity_with_directives_estimator(query, schema)
+
+    assert complexity == 4

@@ -1,7 +1,6 @@
 from graphql import parse, visit
 
-from graphql_complexity.estimators import DirectivesEstimator
-from graphql_complexity.estimators import SimpleEstimator
+from graphql_complexity.estimators import DirectivesEstimator, SimpleEstimator
 from graphql_complexity.visitor import ComplexityVisitor
 
 
@@ -26,9 +25,9 @@ def test_root_fields_complexity_is_added():
         }
     """
 
-    complexity = _evaluate_complexity_with_simple_estimator(query, 1, 2)
+    complexity = _evaluate_complexity_with_simple_estimator(query, 2, 1)
 
-    assert complexity == 10
+    assert complexity == 6
 
 
 def _evaluate_complexity_with_directives_estimator(

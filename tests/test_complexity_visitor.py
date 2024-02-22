@@ -1,3 +1,4 @@
+import pytest
 from graphql import parse, visit
 
 from graphql_complexity.estimators import SimpleEstimator
@@ -168,3 +169,10 @@ def test_complexity_visitor_handles_input_arguments():
     complexity = _evaluate_complexity(query)
 
     assert complexity == 1
+
+
+def test_visitor_should_raise_when_no_estimator_is_given():
+    with pytest.raises(
+        ValueError, match="Estimator must be of type 'ComplexityEstimator'"
+    ):
+        ComplexityVisitor(estimator=None)
