@@ -2,6 +2,7 @@
 Python library to compute the complexity of a GraphQL operation
 
 ![Unit Tests](https://github.com/Checho3388/graphql-complexity/actions/workflows/python-package.yml/badge.svg)
+[![PyPI](https://img.shields.io/pypi/v/graphql-complexity?label=pypi%20package)](https://pypi.org/project/graphql-complexity/)
 
 
 ## Usage
