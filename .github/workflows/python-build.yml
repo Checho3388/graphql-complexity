@@ -46,10 +46,14 @@ jobs:
         poetry run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     
     - name: Run unit tests
-      run: poetry run pytest --cov .
+      run: poetry run pytest --cov=./ --cov-report=xml
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4.0.1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         slug: Checho3388/graphql-complexity
+        directory: ./coverage/reports/
+        fail_ci_if_error: true
+        flags: unittests
+        verbose: true
