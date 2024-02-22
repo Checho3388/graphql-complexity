@@ -1,9 +1,12 @@
 from typing import Iterable
 
 import strawberry
+from graphql import GraphQLError
 
-from src.estimators import SimpleEstimator
-from src.extensions import build_complexity_extension
+from graphql_complexity.estimators import SimpleEstimator
+from graphql_complexity.extensions.strawberry_graphql import (
+    build_complexity_extension
+)
 
 
 @strawberry.type
@@ -48,6 +51,15 @@ class Query:
 
 def _execute_with_complexity(query: str, estimator=None):
     extension = build_complexity_extension(estimator=estimator)
+    schema = strawberry.Schema(query=Query, extensions=[extension])
+
+    return schema.execute_sync(query)
+
+
+def _execute_limiting_complexity(query: str, max_complexity: int, estimator=None):
+    extension = build_complexity_extension(
+        estimator=estimator, max_complexity=max_complexity
+    )
     schema = strawberry.Schema(query=Query, extensions=[extension])
 
     return schema.execute_sync(query)
@@ -125,7 +137,7 @@ def test_complexity_with_a_complex_query():
         }
     """
 
-    result = _execute_with_complexity(query, SimpleEstimator(0, 0))
+    result = _execute_with_complexity(query, SimpleEstimator(0, 1))
 
     assert result.extensions["complexity"]["value"] == 0
 
@@ -205,3 +217,61 @@ def test_complexity_handles_fragments_definition_after_operation_definition():
     result = _execute_with_complexity(query)
 
     assert result.extensions["complexity"]["value"] == 6
+
+
+def test_extension_returns_error_when_complexity_is_bigger_than_the_limit():
+    query = """
+        query Something {
+            a1ComplexityField
+            alias: a1ComplexityField
+        }
+    """
+
+    result = _execute_limiting_complexity(query, 1)
+
+    assert result.errors == [
+        GraphQLError(
+            "Query is too complex. Max complexity is 1, estimated complexity is 2"
+        )
+    ]
+    assert result.data is None
+
+
+def test_extension_does_not_resolve_fields_when_limiting():
+    resolver_calls = 0
+
+    @strawberry.type()
+    class Query:
+        @strawberry.field()
+        def resolver_calls_count(self) -> int:
+            nonlocal resolver_calls
+            resolver_calls += 1
+            return resolver_calls
+
+    query = """
+        query {
+            resolverCallsCount
+        }
+    """
+
+    # Attempt to execute a query with a complexity of 10, but the max complexity is 1
+    # The resolver should not be called
+    extension = build_complexity_extension(
+        estimator=SimpleEstimator(10, 1),
+        max_complexity=1,
+    )
+    schema = strawberry.Schema(query=Query, extensions=[extension])
+    schema.execute_sync(query)
+
+    assert resolver_calls == 0
+
+    # Confirm if the resolver is called when the complexity is within the limit
+    # The resolver should be called
+    extension = build_complexity_extension(
+        estimator=SimpleEstimator(1, 1),
+        max_complexity=1,
+    )
+    schema = strawberry.Schema(query=Query, extensions=[extension])
+    schema.execute_sync(query)
+
+    assert resolver_calls == 1
