@@ -1,4 +1,4 @@
-name: Python package
+name: Python build
 
 on:
   push:
@@ -46,7 +46,7 @@ jobs:
         poetry run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     
     - name: Run unit tests
-      run: poetry run pytest
+      run: poetry run pytest --cov .
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4.0.1
