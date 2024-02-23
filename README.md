@@ -1,8 +1,9 @@
 # graphql-complexity
 Python library to compute the complexity of a GraphQL operation
 
-![Unit Tests](https://github.com/Checho3388/graphql-complexity/actions/workflows/python-package.yml/badge.svg)
+![Build](https://github.com/Checho3388/graphql-complexity/actions/workflows/python-build.yml/badge.svg)
 [![PyPI](https://img.shields.io/pypi/v/graphql-complexity?label=pypi%20package)](https://pypi.org/project/graphql-complexity/)
+[![codecov](https://codecov.io/gh/Checho3388/graphql-complexity/graph/badge.svg?token=4LH7AVN119)](https://codecov.io/gh/Checho3388/graphql-complexity)
 
 ## Installation (Quick Start)
 The library can be installed using pip:
