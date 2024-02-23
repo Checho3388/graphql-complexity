@@ -52,8 +52,3 @@ jobs:
       uses: codecov/codecov-action@v4.0.1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        slug: Checho3388/graphql-complexity
-        directory: ./coverage/reports/
-        fail_ci_if_error: true
-        flags: unittests
-        verbose: true
