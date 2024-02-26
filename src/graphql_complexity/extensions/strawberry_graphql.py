@@ -3,25 +3,23 @@ from typing import Type
 from graphql import GraphQLError
 from strawberry.extensions import SchemaExtension
 
-from graphql_complexity.estimators import ComplexityEstimator, SimpleEstimator
-from graphql_complexity.evaluator.complexity import get_ast_complexity
+from graphql_complexity.estimators import ComplexityEstimator
+from graphql_complexity.evaluator import get_ast_complexity
 
 
 def build_complexity_extension(
-    estimator: ComplexityEstimator | None = None,
+    estimator: ComplexityEstimator,
     max_complexity: int | None = None,
 ) -> Type[SchemaExtension]:
-    estimator = estimator or SimpleEstimator(1, 1)
-
     class ComplexityExtension(SchemaExtension):
-        visitor = None
-        estimated_complexity: int = None
+        estimated_complexity: int | None = None
 
         def on_validate(
             self,
         ):
             self.estimated_complexity = get_ast_complexity(
                 ast=self.execution_context.graphql_document,
+                schema=self.execution_context.schema._schema,
                 estimator=estimator
             )
 

@@ -1,3 +1,5 @@
+from graphql import build_schema
+
 from graphql_complexity import DirectivesEstimator, get_complexity
 
 
@@ -8,7 +10,7 @@ def _evaluate_complexity_with_directives_estimator(
 ):
     estimator = DirectivesEstimator(schema, **kwargs)
 
-    return get_complexity(query, estimator)
+    return get_complexity(query, build_schema(schema), estimator)
 
 
 def test_simple_query_with_directive_estimator():
@@ -74,14 +76,13 @@ def test_():
     ) on FIELD_DEFINITION
 
     type Query {
-      # Fixed complexity of 5
-      someField: String @complexity(value: 5)
+      someField (limit: Int): String @complexity(value: 5, multipliers: ["limit"])
     }
     """
 
     query = """
         query Something {
-            someField
+            someField (limit: 10)
         }
     """
 

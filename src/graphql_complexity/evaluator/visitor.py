@@ -10,7 +10,7 @@ from graphql import (
     GraphQLSkipDirective,
     OperationDefinitionNode,
     VariableNode,
-    Visitor
+    Visitor, is_introspection_type, get_named_type, TypeInfo
 )
 
 from graphql_complexity.estimators.base import ComplexityEstimator
@@ -61,25 +61,14 @@ class ComplexityVisitor(Visitor):
 
     The complexity of the operations is calculated by summing the complexity of
     the fields in the operation.
-
-    Examples:
-        >>> from graphql import parse, visit
-        >>> from graphql_complexity.estimators import SimpleEstimator
-        >>> from graphql_complexity.visitor import ComplexityVisitor
-        >>> query = "query { user { name  email } }"
-        >>> ast = parse(query)
-        >>> visitor = ComplexityVisitor(estimator=SimpleEstimator())
-        >>> exc = visit(ast, visitor)
-        >>> visitor.evaluate()
-        3
-
     """
 
-    def __init__(self, estimator: ComplexityEstimator, variables=None):
+    def __init__(self, estimator: ComplexityEstimator, type_info: TypeInfo, variables: dict[str, Any] | None = None):
         if not isinstance(estimator, ComplexityEstimator):
             raise ValueError("Estimator must be of type 'ComplexityEstimator'")
         self.estimator: ComplexityEstimator = estimator
         self.variables = variables or {}
+        self.type_info = type_info
         self._operations: dict[str, list[ComplexityEvaluationNode]] = {}
         self._fragments: dict[str, list[ComplexityEvaluationNode]] = {}
         self._current_complexity_stack: list[ComplexityEvaluationNode] = []
@@ -130,7 +119,13 @@ class ComplexityVisitor(Visitor):
 
     def enter_field(self, node, key, parent, path, ancestors):
         """Add the complexity of the current field to the current complexity list."""
+        type_ = get_named_type(self.type_info.get_type())
+        if type_ is not None and is_introspection_type(type_):
+            # Skip introspection fields
+            return SKIP
+
         if self._ignore_until_leave is not None:
+            # Skip fields until the parent field is left
             return SKIP
 
         complexity = self.estimator.get_field_complexity(
@@ -149,6 +144,7 @@ class ComplexityVisitor(Visitor):
             self._ignore_until_leave is not None
             and node.name.value == self._ignore_until_leave.name
         ):
+            # If we are leaving the ignored node, reset the flag
             self._ignore_until_leave = None
 
     def enter_fragment_definition(self, *args, **kwargs):
@@ -168,7 +164,7 @@ class ComplexityVisitor(Visitor):
         self._current_complexity_stack = []
 
 
-def should_include_field(node: DirectiveNode, variables: dict[str, Any] = None) -> bool:
+def should_include_field(node: DirectiveNode, variables: dict[str, Any]) -> bool:
     """Check if a field should be ignored based on the 'skip' and 'include' directives."""
     if node.name.value == GraphQLIncludeDirective.name:
         return get_directive_if_value(node, variables)
@@ -180,9 +176,12 @@ def should_include_field(node: DirectiveNode, variables: dict[str, Any] = None) 
 
 
 def get_directive_if_value(directive: DirectiveNode, variables: dict[str, Any]) -> bool:
-    """Returns the value of the `if` argument from the Directive"""
+    """Returns the value of the `if` argument from the Directive. Used to get the boolean
+    value for skip/include directives."""
     if_arg = next(arg for arg in directive.arguments if arg.name.value == "if")
     if isinstance(if_arg.value, VariableNode):
-        return variables.get(if_arg.value.name.value)
+        return bool(variables.get(if_arg.value.name.value))
     elif isinstance(if_arg.value, BooleanValueNode):
-        return if_arg.value.value
+        return bool(if_arg.value.value)
+
+    raise ValueError("Value for `if` argument not found")
