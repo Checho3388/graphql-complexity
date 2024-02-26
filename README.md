@@ -1,8 +1,9 @@
 # graphql-complexity
 Python library to compute the complexity of a GraphQL operation
 
-![Unit Tests](https://github.com/Checho3388/graphql-complexity/actions/workflows/python-package.yml/badge.svg)
+![Build](https://github.com/Checho3388/graphql-complexity/actions/workflows/python-buildlu.yml/badge.svg)
 [![PyPI](https://img.shields.io/pypi/v/graphql-complexity?label=pypi%20package)](https://pypi.org/project/graphql-complexity/)
+[![codecov](https://codecov.io/gh/Checho3388/graphql-complexity/graph/badge.svg?token=4LH7AVN119)](https://codecov.io/gh/Checho3388/graphql-complexity)
 
 ## Installation (Quick Start)
 The library can be installed using pip:
@@ -18,6 +19,18 @@ pip install graphql-complexity[strawberry-graphql]
 Create a file named `complexity.py` with the following content:
 ```python
 from graphql_complexity import (get_complexity, SimpleEstimator)
+from graphql import build_schema
+
+
+schema = build_schema("""
+    type User {
+        id: ID!
+        name: String!
+    }
+    type Query {
+        user: User
+    }
+""")
 
 query = """
     query SomeQuery {
@@ -30,6 +43,7 @@ query = """
 
 complexity = get_complexity(
     query=query, 
+    schema=schema,
     estimator=SimpleEstimator(complexity=1, multiplier=10)
 )
 if complexity > 10:
@@ -163,6 +177,7 @@ extension that can be added to the schema.
 
 ```python
 import strawberry
+from graphql_complexity.estimators import SimpleEstimator
 from graphql_complexity.extensions.strawberry_graphql import build_complexity_extension
 
 
@@ -172,7 +187,7 @@ class Query:
     def hello_world(self) -> str:
         return "Hello world!"
 
-extension = build_complexity_extension()
+extension = build_complexity_extension(estimator=SimpleEstimator())
 schema = strawberry.Schema(query=Query, extensions=[extension])
 
 schema.execute_sync("query { helloWorld }")

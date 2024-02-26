@@ -1,3 +1,5 @@
+from typing import Any
+
 from graphql import Visitor, parse, visit
 
 from graphql_complexity.estimators.base import ComplexityEstimator
@@ -63,7 +65,7 @@ class DirectivesEstimator(ComplexityEstimator):
 
     @staticmethod
     def collect_from_schema(schema: str, directive_name: str) -> dict[str, int]:
-        collector = {}
+        collector: dict[str, Any] = {}
         ast = parse(schema)
         visitor = DirectivesVisitor(collector=collector, directive_name=directive_name)
         visit(ast, visitor)

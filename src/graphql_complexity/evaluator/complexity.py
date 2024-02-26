@@ -1,18 +1,20 @@
-from graphql import parse, visit
+from graphql import parse, visit, TypeInfo, TypeInfoVisitor, GraphQLSchema
 
-from ..estimators import ComplexityEstimator
 from .visitor import ComplexityVisitor
+from ..estimators import ComplexityEstimator
 
 
-def get_complexity(query: str, estimator: ComplexityEstimator) -> int:
+def get_complexity(query: str, schema: GraphQLSchema, estimator: ComplexityEstimator) -> int:
     """Calculate the complexity of a query using the provided estimator."""
     ast = parse(query)
-    return get_ast_complexity(ast, estimator=estimator)
+    return get_ast_complexity(ast, schema=schema, estimator=estimator)
 
 
-def get_ast_complexity(ast, estimator: ComplexityEstimator) -> int:
+def get_ast_complexity(ast, schema: GraphQLSchema, estimator: ComplexityEstimator) -> int:
     """Calculate the complexity of a query using the provided estimator."""
-    visitor = ComplexityVisitor(estimator=estimator)
-    visit(ast, visitor)
+    type_info = TypeInfo(schema)
+
+    visitor = ComplexityVisitor(estimator=estimator, type_info=type_info)
+    visit(ast, TypeInfoVisitor(type_info, visitor))
 
     return visitor.evaluate()

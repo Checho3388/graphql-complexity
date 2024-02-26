@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import List
 
 import strawberry
 from graphql import GraphQLError
@@ -16,47 +16,32 @@ class Obj:
 
 
 def get_value() -> str:
-    return "Strawberry"
-
-
-def get_list() -> Iterable[str]:
-    return ["Strawberry"]
-
-
-def get_obj() -> Obj:
-    return Obj(a_str="a_str", an_int=3)
-
-
-def get_obj_list() -> Iterable[Obj]:
-    return [Obj(a_str="a_str_in_list", an_int=3), Obj(a_str="another_str", an_int=3)]
-
-
-@strawberry.input
-class AnInput:
-    sth: str
+    return "GraphQL-Complexity!"
 
 
 @strawberry.type
 class Query:
     a_1_complexity_field: str = strawberry.field(resolver=get_value)
     a_2_complexity_field: str = strawberry.field(resolver=get_value)
-    an_n_complexity_field: list[str] = strawberry.field(resolver=get_list)
-    an_obj: Obj = strawberry.field(resolver=get_obj)
-    an_obj_list: list[Obj] = strawberry.field(resolver=get_obj_list)
 
     @strawberry.field()
-    def a_field_with_args(self, an_arg: str) -> str:
-        return "Something"
+    def an_obj(self) -> Obj:
+        return Obj(a_str="a_str", an_int=3)
+
+    @strawberry.field()
+    def an_obj_list(self) -> List[Obj]:
+        return [Obj(a_str="a_str_in_list", an_int=3), Obj(a_str="another_str", an_int=3)]
 
 
 def _execute_with_complexity(query: str, estimator=None):
+    estimator = estimator or SimpleEstimator()
     extension = build_complexity_extension(estimator=estimator)
     schema = strawberry.Schema(query=Query, extensions=[extension])
-
     return schema.execute_sync(query)
 
 
 def _execute_limiting_complexity(query: str, max_complexity: int, estimator=None):
+    estimator = estimator or SimpleEstimator()
     extension = build_complexity_extension(
         estimator=estimator, max_complexity=max_complexity
     )
@@ -109,8 +94,8 @@ def test_complexity_visitor_respects_graphql_result_data():
     result = _execute_with_complexity(query)
 
     assert result.data == {
-        "a1ComplexityField": "Strawberry",
-        "a2ComplexityField": "Strawberry",
+        "a1ComplexityField": "GraphQL-Complexity!",
+        "a2ComplexityField": "GraphQL-Complexity!",
         "anObj": {"aStr": "a_str", "anInt": 3},
         "anObjList": [
             {"aStr": "a_str_in_list", "anInt": 3},

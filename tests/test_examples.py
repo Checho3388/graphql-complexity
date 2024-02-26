@@ -1,3 +1,5 @@
+from graphql import build_schema
+
 from graphql_complexity import (
     DirectivesEstimator,
     SimpleEstimator,
@@ -6,14 +8,23 @@ from graphql_complexity import (
 
 
 def _evaluate_complexity_with_simple_estimator(
-    query: str, field_complexity=1, multiplier=1
+    query: str, schema: str, field_complexity=1, multiplier=1
 ):
     estimator = SimpleEstimator(field_complexity, multiplier)
 
-    return get_complexity(query, estimator)
+    return get_complexity(query, build_schema(schema), estimator)
 
 
 def test_root_fields_complexity_is_added():
+    schema = """
+    type Obj {
+        name: String
+        email: String
+    }
+    type Query {
+        user: Obj
+    }
+    """
     query = """
         query {
             user {
@@ -23,7 +34,7 @@ def test_root_fields_complexity_is_added():
         }
     """
 
-    complexity = _evaluate_complexity_with_simple_estimator(query, 2, 1)
+    complexity = _evaluate_complexity_with_simple_estimator(query, schema, 2, 1)
 
     assert complexity == 6
 
@@ -34,7 +45,7 @@ def _evaluate_complexity_with_directives_estimator(
 ):
     estimator = DirectivesEstimator(schema)
 
-    return get_complexity(query, estimator)
+    return get_complexity(query, build_schema(schema), estimator)
 
 
 def test_simple_query_with_directive_estimator():
