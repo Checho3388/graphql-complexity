@@ -1,7 +1,7 @@
 # graphql-complexity
 Python library to compute the complexity of a GraphQL operation
 
-![Build](https://github.com/Checho3388/graphql-complexity/actions/workflows/python-buildlu.yml/badge.svg)
+![Build](https://github.com/Checho3388/graphql-complexity/actions/workflows/python-build.yml/badge.svg)
 [![PyPI](https://img.shields.io/pypi/v/graphql-complexity?label=pypi%20package)](https://pypi.org/project/graphql-complexity/)
 [![codecov](https://codecov.io/gh/Checho3388/graphql-complexity/graph/badge.svg?token=4LH7AVN119)](https://codecov.io/gh/Checho3388/graphql-complexity)
 
@@ -52,6 +52,20 @@ if complexity > 10:
 
 The library exposes the method `get_complexity` with the algorithm to compute the complexity of a GraphQL operation. 
 The algorithm visits each node of the query and computes the complexity of each field using an **estimator**.
+
+## Library Demo
+The library includes a demo to compute the complexity of a query using the command line.
+
+The demo is built on top of strawberry-graphql and makes use of the additional capabilities added
+by the `debug-server` extras of the library.
+
+To run it, you need to install the library with:
+```shell
+git clone https://github.com/Checho3388/graphql-complexity
+cd graphql-complexity
+poetry install --with demo
+poetry run strawberry server graphql_complexity.extensions.strawberry.demo
+```
 
 
 ## Estimators
@@ -177,24 +191,29 @@ extension that can be added to the schema.
 
 ```python
 import strawberry
-from graphql_complexity.estimators import SimpleEstimator
-from graphql_complexity.extensions.strawberry_graphql import build_complexity_extension
+
+from graphql_complexity.extensions.strawberry import (
+    ComplexityDirective,
+    build_complexity_extension_using_directive_estimator,
+)
 
 
 @strawberry.type
 class Query:
-    @strawberry.field()
+    @strawberry.field(directives=[ComplexityDirective(value=1)])
     def hello_world(self) -> str:
         return "Hello world!"
 
-extension = build_complexity_extension(estimator=SimpleEstimator())
+
+extension = build_complexity_extension_using_directive_estimator()
 schema = strawberry.Schema(query=Query, extensions=[extension])
 
 schema.execute_sync("query { helloWorld }")
 ```
 
-The `build_complexity_extension` method accepts an estimator as optional argument giving the possibility to use one
-of the built-in estimators or a custom estimator.
+The `build_complexity_extension` method accepts an integer to limit the maximum complexity of the query. If the complexity
+of the query exceeds the limit the query returns an error.
+
 
 ## Credits
 
