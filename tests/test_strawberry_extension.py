@@ -3,9 +3,9 @@ from typing import List
 import strawberry
 from graphql import GraphQLError
 
-from graphql_complexity.estimators import SimpleEstimator
-from graphql_complexity.extensions.strawberry_graphql import (
-    build_complexity_extension
+from graphql_complexity.extensions.strawberry import (
+    ComplexityDirective,
+    build_complexity_extension_using_directive_estimator,
 )
 
 
@@ -21,30 +21,27 @@ def get_value() -> str:
 
 @strawberry.type
 class Query:
-    a_1_complexity_field: str = strawberry.field(resolver=get_value)
-    a_2_complexity_field: str = strawberry.field(resolver=get_value)
+    a_1_complexity_field: str = strawberry.field(resolver=get_value, directives=[ComplexityDirective(value=1)])
+    a_2_complexity_field: str = strawberry.field(resolver=get_value, directives=[ComplexityDirective(value=2)])
 
-    @strawberry.field()
+    @strawberry.field(directives=[ComplexityDirective(value=1)])
     def an_obj(self) -> Obj:
         return Obj(a_str="a_str", an_int=3)
 
-    @strawberry.field()
+    @strawberry.field(directives=[ComplexityDirective(value=1)])
     def an_obj_list(self) -> List[Obj]:
         return [Obj(a_str="a_str_in_list", an_int=3), Obj(a_str="another_str", an_int=3)]
 
 
-def _execute_with_complexity(query: str, estimator=None):
-    estimator = estimator or SimpleEstimator()
-    extension = build_complexity_extension(estimator=estimator)
+def _execute_with_complexity(query: str):
+    extension = build_complexity_extension_using_directive_estimator()
     schema = strawberry.Schema(query=Query, extensions=[extension])
+
     return schema.execute_sync(query)
 
 
 def _execute_limiting_complexity(query: str, max_complexity: int, estimator=None):
-    estimator = estimator or SimpleEstimator()
-    extension = build_complexity_extension(
-        estimator=estimator, max_complexity=max_complexity
-    )
+    extension = build_complexity_extension_using_directive_estimator(max_complexity=max_complexity)
     schema = strawberry.Schema(query=Query, extensions=[extension])
 
     return schema.execute_sync(query)
@@ -103,28 +100,7 @@ def test_complexity_visitor_respects_graphql_result_data():
         ],
     }
 
-    assert result.extensions["complexity"]["value"] == 8
-
-
-def test_complexity_with_a_complex_query():
-    query = """
-        query Something {
-            a1ComplexityField
-            a2ComplexityField
-            anObj {
-                aStr
-                anInt
-            }
-            anObjList {
-                aStr
-                anInt
-            }
-        }
-    """
-
-    result = _execute_with_complexity(query, SimpleEstimator(0, 1))
-
-    assert result.extensions["complexity"]["value"] == 0
+    assert result.extensions["complexity"]["value"] == 9
 
 
 def test_complexity_works_with_multiple_operation_definitions():
@@ -227,7 +203,7 @@ def test_extension_does_not_resolve_fields_when_limiting():
 
     @strawberry.type()
     class Query:
-        @strawberry.field()
+        @strawberry.field(directives=[ComplexityDirective(value=10)])
         def resolver_calls_count(self) -> int:
             nonlocal resolver_calls
             resolver_calls += 1
@@ -241,8 +217,7 @@ def test_extension_does_not_resolve_fields_when_limiting():
 
     # Attempt to execute a query with a complexity of 10, but the max complexity is 1
     # The resolver should not be called
-    extension = build_complexity_extension(
-        estimator=SimpleEstimator(10, 1),
+    extension = build_complexity_extension_using_directive_estimator(
         max_complexity=1,
     )
     schema = strawberry.Schema(query=Query, extensions=[extension])
@@ -252,9 +227,8 @@ def test_extension_does_not_resolve_fields_when_limiting():
 
     # Confirm if the resolver is called when the complexity is within the limit
     # The resolver should be called
-    extension = build_complexity_extension(
-        estimator=SimpleEstimator(1, 1),
-        max_complexity=1,
+    extension = build_complexity_extension_using_directive_estimator(
+        max_complexity=10,
     )
     schema = strawberry.Schema(query=Query, extensions=[extension])
     schema.execute_sync(query)

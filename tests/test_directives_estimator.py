@@ -8,9 +8,10 @@ def _evaluate_complexity_with_directives_estimator(
     schema: str,
     **kwargs,
 ):
+    graphql_schema = build_schema(schema)
     estimator = DirectivesEstimator(schema, **kwargs)
 
-    return get_complexity(query, build_schema(schema), estimator)
+    return get_complexity(query, graphql_schema, estimator)
 
 
 def test_simple_query_with_directive_estimator():
@@ -35,33 +36,6 @@ def test_simple_query_with_directive_estimator():
     """
 
     complexity = _evaluate_complexity_with_directives_estimator(query, schema)
-
-    assert complexity == 5
-
-
-def test_directive_estimator_accepts_to_set_directive_name():
-    schema = """directive @cost(
-      value: Int!
-    ) on FIELD_DEFINITION
-
-    type Query {
-      oneField: String @cost(value: 3)
-      otherField: String @cost(value: 1)
-      withoutDirective: String
-    }
-    """
-
-    query = """
-        query Something {
-            oneField
-            otherField
-            withoutDirective
-        }
-    """
-
-    complexity = _evaluate_complexity_with_directives_estimator(
-        query, schema, directive_name="cost"
-    )
 
     assert complexity == 5
 
@@ -114,7 +88,7 @@ def test_directive_estimator_accepts_to_set_missing_complexity():
     """
 
     complexity = _evaluate_complexity_with_directives_estimator(
-        query, schema, missing_complexity=10
+        query, schema, default_complexity=10
     )
 
     assert complexity == 14

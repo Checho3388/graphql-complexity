@@ -69,6 +69,7 @@ class ComplexityVisitor(Visitor):
         self.estimator: ComplexityEstimator = estimator
         self.variables = variables or {}
         self.type_info = type_info
+        self.node_path: list[str] = []
         self._operations: dict[str, list[ComplexityEvaluationNode]] = {}
         self._fragments: dict[str, list[ComplexityEvaluationNode]] = {}
         self._current_complexity_stack: list[ComplexityEvaluationNode] = []
@@ -117,8 +118,13 @@ class ComplexityVisitor(Visitor):
         operation_name = node.name.value if node.name else UNNAMED_OPERATION
         self._operations[operation_name] = self._current_complexity_stack
 
+    @property
+    def current_node_path(self) -> str:
+        return '.'.join(self.node_path)
+
     def enter_field(self, node, key, parent, path, ancestors):
         """Add the complexity of the current field to the current complexity list."""
+        self.node_path.append(node.name.value)
         type_ = get_named_type(self.type_info.get_type())
         if type_ is not None and is_introspection_type(type_):
             # Skip introspection fields
@@ -133,13 +139,14 @@ class ComplexityVisitor(Visitor):
         )
         self._current_complexity_stack.append(
             Field(
-                name=node.name.value,
+                name=self.current_node_path,
                 complexity=complexity,
                 multiplier=self._multipliers_stack[-1],
             )
         )
 
     def leave_field(self, node, key, parent, path, ancestors):
+        self.node_path.pop()
         if (
             self._ignore_until_leave is not None
             and node.name.value == self._ignore_until_leave.name

@@ -1,5 +1,4 @@
 import pytest
-from graphql import build_schema
 
 from graphql_complexity import SimpleEstimator, get_complexity
 from tests.ut_utils import schema
@@ -9,7 +8,7 @@ def _evaluate_complexity_with_simple_estimator(
     query: str, field_complexity=1, multiplier=1
 ):
     estimator = SimpleEstimator(field_complexity, multiplier)
-    return get_complexity(query, build_schema(schema), estimator)
+    return get_complexity(query, schema, estimator)
 
 
 def test_root_fields_do_not_multiply():

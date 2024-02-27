@@ -1,15 +1,13 @@
 import pytest
-from graphql import build_schema
 
 from graphql_complexity import SimpleEstimator, get_complexity
 from graphql_complexity.evaluator.visitor import ComplexityVisitor
 from tests import ut_utils
 
 
-def _evaluate_complexity(query: str, estimator=None):
-    estimator = estimator or SimpleEstimator(1, 1)
-    schema = build_schema(ut_utils.schema)
-    return get_complexity(query, schema, estimator)
+def _evaluate_complexity(query: str):
+    estimator = SimpleEstimator(1, 1)
+    return get_complexity(query, ut_utils.schema, estimator)
 
 
 def test_one_field_simple_complexity_calculation():

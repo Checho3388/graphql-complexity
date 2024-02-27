@@ -1,4 +1,6 @@
-schema = """
+from graphql import build_schema
+
+schema_sdl = """
 type Query {
   hero(episode: Episode): Character
   droid(id: ID!): Droid
@@ -23,3 +25,5 @@ enum Episode {
   EMPIRE
   JEDI
 }"""
+
+schema = build_schema(schema_sdl)
