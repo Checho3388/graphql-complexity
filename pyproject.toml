@@ -36,6 +36,13 @@ black = "^24.2.0"
 pytest-cov = "^4.1.0"
 flake8 = "^7.0.0"
 
+[tool.poetry.group.demo]
+optional = true
+
+[tool.poetry.group.demo.dependencies]
+strawberry-graphql = { version = "^0.219.2", extras = ["debug-server"]}
+
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
