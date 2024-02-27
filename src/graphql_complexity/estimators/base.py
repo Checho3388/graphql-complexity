@@ -2,6 +2,7 @@ import abc
 
 
 class ComplexityEstimator(abc.ABC):
+    """Interface for the complexity estimator."""
     @abc.abstractmethod
     def get_field_complexity(self, node, key, parent, path, ancestors) -> int:
         """Return the complexity of the field."""
