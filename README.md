@@ -64,7 +64,7 @@ To run it, you need to install the library with:
 git clone https://github.com/Checho3388/graphql-complexity
 cd graphql-complexity
 poetry install --with demo
-poetry run strawberry server graphql_complexity.extensions.strawberry.demo
+poetry run strawberry server graphql_complexity.libraries.strawberry.demo
 ```
 
 
@@ -192,7 +192,7 @@ extension that can be added to the schema.
 ```python
 import strawberry
 
-from graphql_complexity.extensions.strawberry import (
+from graphql_complexity.libraries.strawberry import (
     ComplexityDirective,
     build_complexity_extension_using_directive_estimator,
 )

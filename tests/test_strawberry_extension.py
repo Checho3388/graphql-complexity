@@ -3,7 +3,7 @@ from typing import List
 import strawberry
 from graphql import GraphQLError
 
-from graphql_complexity.extensions.strawberry import (
+from graphql_complexity.libraries.strawberry import (
     ComplexityDirective,
     build_complexity_extension_using_directive_estimator,
 )
