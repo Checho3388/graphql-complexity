@@ -2,20 +2,20 @@ import dataclasses
 
 
 @dataclasses.dataclass(frozen=True, slots=True)
-class ComplexityEvaluationNode:
+class ComplexityNode:
     name: str
 
     def evaluate(
-        self, fragments_definition: dict[str, list["ComplexityEvaluationNode"]]
+        self, fragments_definition: dict[str, list["ComplexityNode"]]
     ) -> int:
         raise NotImplementedError
 
 
 @dataclasses.dataclass(frozen=True, slots=True)
-class LazyFragment(ComplexityEvaluationNode):
+class LazyFragment(ComplexityNode):
 
     def evaluate(
-        self, fragments_definition: dict[str, list["ComplexityEvaluationNode"]]
+        self, fragments_definition: dict[str, list["ComplexityNode"]]
     ):
         nodes = fragments_definition.get(self.name)
         if not nodes:
@@ -26,7 +26,7 @@ class LazyFragment(ComplexityEvaluationNode):
 
 
 @dataclasses.dataclass(frozen=True, slots=True)
-class Field(ComplexityEvaluationNode):
+class Field(ComplexityNode):
     complexity: int
     multiplier: int
 

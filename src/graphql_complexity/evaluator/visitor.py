@@ -17,7 +17,7 @@ from graphql import (
 )
 
 from graphql_complexity.estimators.base import ComplexityEstimator
-from .nodes import ComplexityEvaluationNode, LazyFragment, Field
+from .nodes import ComplexityNode, LazyFragment, Field
 
 UNNAMED_OPERATION = "UnnamedOperation"
 
@@ -40,9 +40,9 @@ class ComplexityVisitor(Visitor):
         self.estimator: ComplexityEstimator = estimator
         self.variables = variables or {}
         self.type_info = type_info
-        self._operations: dict[str, list[ComplexityEvaluationNode]] = {}
-        self._fragments: dict[str, list[ComplexityEvaluationNode]] = {}
-        self._current_complexity_stack: list[ComplexityEvaluationNode] = []
+        self._operations: dict[str, list[ComplexityNode]] = {}
+        self._fragments: dict[str, list[ComplexityNode]] = {}
+        self._current_complexity_stack: list[ComplexityNode] = []
         self._multipliers_stack = [1]
         self._ignore_until_leave = None
         super().__init__()
