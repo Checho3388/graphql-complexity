@@ -1,4 +1,3 @@
-import dataclasses
 from typing import Any
 
 from graphql import (
@@ -7,48 +6,20 @@ from graphql import (
     DirectiveNode,
     FragmentDefinitionNode,
     GraphQLIncludeDirective,
+    GraphQLList,
     GraphQLSkipDirective,
     OperationDefinitionNode,
+    TypeInfo,
     VariableNode,
-    Visitor, is_introspection_type, get_named_type, TypeInfo
+    Visitor,
+    get_named_type,
+    is_introspection_type
 )
 
 from graphql_complexity.estimators.base import ComplexityEstimator
+from .nodes import ComplexityEvaluationNode, LazyFragment, Field
 
 UNNAMED_OPERATION = "UnnamedOperation"
-
-
-@dataclasses.dataclass(frozen=True, slots=True)
-class ComplexityEvaluationNode:
-    name: str
-
-    def evaluate(
-        self, fragments_definition: dict[str, list["ComplexityEvaluationNode"]]
-    ) -> int:
-        raise NotImplementedError
-
-
-@dataclasses.dataclass(frozen=True, slots=True)
-class LazyFragment(ComplexityEvaluationNode):
-
-    def evaluate(
-        self, fragments_definition: dict[str, list["ComplexityEvaluationNode"]]
-    ):
-        nodes = fragments_definition.get(self.name)
-        if not nodes:
-            return 0
-        return sum(
-            node.evaluate(fragments_definition=fragments_definition) for node in nodes
-        )
-
-
-@dataclasses.dataclass(frozen=True, slots=True)
-class Field(ComplexityEvaluationNode):
-    complexity: int
-    multiplier: int
-
-    def evaluate(self, *args, **kwargs) -> int:
-        return self.complexity * self.multiplier
 
 
 class ComplexityVisitor(Visitor):
@@ -119,7 +90,11 @@ class ComplexityVisitor(Visitor):
 
     def enter_field(self, node, key, parent, path, ancestors):
         """Add the complexity of the current field to the current complexity list."""
-        type_ = get_named_type(self.type_info.get_type())
+        wrapped_type = self.type_info.get_type()
+        if isinstance(wrapped_type, GraphQLList):
+            # ToDo: handle lists with complexity measure
+            pass
+        type_ = get_named_type(wrapped_type)
         if type_ is not None and is_introspection_type(type_):
             # Skip introspection fields
             return SKIP
