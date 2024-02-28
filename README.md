@@ -1,16 +1,27 @@
 # graphql-complexity
-Python library to compute the complexity of a GraphQL operation
+Welcome to GraphQL-Complexity! This Python library provides functionality to compute the complexity of a GraphQL operation, contributing to better understanding and optimization of your GraphQL APIs. This library is designed to be stable, robust, and highly useful for developers working with GraphQL.
 
-![Build](https://github.com/Checho3388/graphql-complexity/actions/workflows/python-buildlu.yml/badge.svg)
+![Build](https://github.com/Checho3388/graphql-complexity/actions/workflows/python-build.yml/badge.svg)
 [![PyPI](https://img.shields.io/pypi/v/graphql-complexity?label=pypi%20package)](https://pypi.org/project/graphql-complexity/)
 [![codecov](https://codecov.io/gh/Checho3388/graphql-complexity/graph/badge.svg?token=4LH7AVN119)](https://codecov.io/gh/Checho3388/graphql-complexity)
 
+## Features
+- Compute complexity of GraphQL queries
+- Multiple built-in estimators for complexity computation
+- Customizable estimators for specific use cases
+- Support for Strawberry GraphQL library
+
+
 ## Installation (Quick Start)
-The library can be installed using pip:
+
+You can install the library via pip:
+
 ```shell
 pip install graphql-complexity
 ```
-To use `strawberry-graphql` integration, you need to install the library with the `strawberry-graphql` extra.
+
+For Strawberry GraphQL integration, use the following command:
+
 ```shell
 pip install graphql-complexity[strawberry-graphql]
 ```
@@ -18,7 +29,7 @@ pip install graphql-complexity[strawberry-graphql]
 ## Getting Started
 Create a file named `complexity.py` with the following content:
 ```python
-from graphql_complexity import (get_complexity, SimpleEstimator)
+from graphql_complexity import get_complexity, SimpleEstimator
 from graphql import build_schema
 
 
@@ -55,19 +66,12 @@ The algorithm visits each node of the query and computes the complexity of each 
 
 
 ## Estimators
-In order to get the complexity of a query, an estimator needs to be defined. 
 
->The main responsibility of an estimator is to give each node an integer value representing its complexity and
-> (optionally) a multiplier that reflects the complexity in relation to the depth of the query.
-
-There are two built-in estimators (`SimpleEstimator` and `DirectiveEstimator`), plus the capability to create any new
-estimator by implementing the `ComplexityEstimator` interface.
+GraphQL-Complexity provides various built-in estimators for computing query complexity:
 
 ### SimpleEstimator
-Estimate fields complexity based on constants for complexity and multiplier. 
-
-This estimator assigns a **constant** complexity value to each field and multiplies
-it by another **constant** which is propagated along the depth of the query.
+Estimate fields complexity based on constants for complexity and multiplier. This assigns a constant 
+complexity value to each field and multiplies it by another constant, which is propagated along the depth of the query.
 
 ```python
 from graphql_complexity import SimpleEstimator
@@ -76,33 +80,10 @@ from graphql_complexity import SimpleEstimator
 estimator = SimpleEstimator(complexity=2, multiplier=1)
 ```
 
-Given the following GraphQL query:
-```graphql
-query {
-    user {
-        name
-        email
-    }
-}
-```
-As the complexity and multiplier are constant, the complexity of the fields is:
-
-| Field | Complexity    |
-|-------|---------------|
-| user  | `1`           |
-| name  | `2 * (2 * 1)` |
-| email | `2 * (2 * 1)` |
-
-And the total complexity is `6`.
-
 ### DirectivesEstimator
 
-Define fields complexity using schema directives.
-
-Assigns a complexity value to each field and multiplies it by the depth of the query. 
-It also supports the `@complexity` directive to assign a custom complexity value to a field.
-
-This approach requires to provide the schema to the estimator.
+Define fields complexity using schema directives. This assigns a complexity value to each field and multiplies it 
+by the depth of the query. It also supports the @complexity directive to assign a custom complexity value to a field.
 
 ```python
 from graphql_complexity import DirectivesEstimator
@@ -123,27 +104,8 @@ type Query {
 estimator = DirectivesEstimator(schema)
 ```
 
-Given the schema from above and the following query:
-```graphql
-query {
-    oneField
-    otherField
-    withoutDirective
-}
-```
-
-The complexity of the fields results in the following table:
-
-| Field            | Complexity | Comment                                                                                         |
-|------------------|------------|-------------------------------------------------------------------------------------------------|
-| oneField         | `5`        | Complexity given by `@complexity(value: 5)`                                                     |
-| otherField       | `1`        | Complexity given by `@complexity(value: 1)`                                                     |
-| withoutDirective | `1`        | The default complexity for fields without directive is `1`, this can be modified by parameters. |
-
-And the total complexity is `7`.
-
 ### Custom estimator
-This option allows to define a custom estimator to compute the complexity of a field using the `ComplexityEstimator` interface. For example:
+Custom estimators can be defined to compute the complexity of a field using the `ComplexityEstimator` interface.
 
 ```python
 from graphql_complexity import ComplexityEstimator
@@ -160,20 +122,20 @@ class CustomEstimator(ComplexityEstimator):
 ```
 
 
-## Supported libraries (based on GraphQL-core)
+## Supported libraries
 This library is compatible with the following GraphQL libraries:
 
-### Strawberry
+### Strawberry GraphQL
 
 The library is compatible with [strawberry-graphql](https://pypi.org/project/strawberry-graphql/). 
-To use the library with strawberry-graphql, you need to install the library with the `strawberry-graphql` extra.
+Use the following command to install the library with Strawberry support:
+
 ```shell
 poetry install --extras strawberry-graphql
 ```
 
-To use the library with [strawberry-graphql](https://pypi.org/project/strawberry-graphql/), you need to use the `build_complexity_extension` method to build
-the complexity extension and add it to the schema. This method receives an estimator and returns a complexity 
-extension that can be added to the schema.
+To use the library with Strawberry GraphQL, use the `build_complexity_extension` method to build the complexity 
+extension and add it to the schema. This method receives an estimator and returns a complexity extension that can be added to the schema.
 
 ```python
 import strawberry
