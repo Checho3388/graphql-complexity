@@ -1,4 +1,7 @@
-# graphql-complexity
+<img src="https://github.com/Checho3388/graphql-complexity/raw/main/.github/logo.png width="150">
+
+# GraphQL Complexity
+
 Welcome to GraphQL-Complexity! This Python library provides functionality to compute the complexity of a GraphQL operation, contributing to better understanding and optimization of your GraphQL APIs. This library is designed to be stable, robust, and highly useful for developers working with GraphQL.
 
 ![Build](https://github.com/Checho3388/graphql-complexity/actions/workflows/python-build.yml/badge.svg)
