@@ -1,7 +1,7 @@
-from graphql import parse, visit, TypeInfo, TypeInfoVisitor, GraphQLSchema
+from graphql import GraphQLSchema, TypeInfo, TypeInfoVisitor, parse, visit
 
-from .visitor import ComplexityVisitor
 from ..estimators import ComplexityEstimator
+from .visitor import ComplexityVisitor
 
 
 def get_complexity(query: str, schema: GraphQLSchema, estimator: ComplexityEstimator) -> int:
