@@ -17,7 +17,7 @@ from graphql import (
 )
 
 from graphql_complexity.estimators.base import ComplexityEstimator
-from .nodes import ComplexityNode, LazyFragment, Field
+from .nodes import ComplexityNode, FragmentNode, Field
 
 UNNAMED_OPERATION = "UnnamedOperation"
 
@@ -132,7 +132,7 @@ class ComplexityVisitor(Visitor):
 
     def enter_fragment_spread(self, node, *args, **kwargs):
         """Add a lazy fragment to the current complexity list."""
-        self._current_complexity_stack.append(LazyFragment(name=node.name.value))
+        self._current_complexity_stack.append(FragmentNode(name=node.name.value))
 
     def enter_inline_fragment(self, *args, **kwargs):
         """Start a new complexity list for the current inline fragment."""

@@ -12,7 +12,7 @@ class ComplexityNode:
 
 
 @dataclasses.dataclass(frozen=True, slots=True)
-class LazyFragment(ComplexityNode):
+class FragmentNode(ComplexityNode):
 
     def evaluate(
         self, fragments_definition: dict[str, list["ComplexityNode"]]
