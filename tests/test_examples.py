@@ -7,10 +7,8 @@ from graphql_complexity import (
 )
 
 
-def _evaluate_complexity_with_simple_estimator(
-    query: str, schema: str, field_complexity=1, multiplier=1
-):
-    estimator = SimpleEstimator(field_complexity, multiplier)
+def _evaluate_complexity_with_simple_estimator(query: str, schema: str, field_complexity=1):
+    estimator = SimpleEstimator(field_complexity)
 
     return get_complexity(query, build_schema(schema), estimator)
 
@@ -34,7 +32,7 @@ def test_root_fields_complexity_is_added():
         }
     """
 
-    complexity = _evaluate_complexity_with_simple_estimator(query, schema, 2, 1)
+    complexity = _evaluate_complexity_with_simple_estimator(query, schema, 2)
 
     assert complexity == 6
 

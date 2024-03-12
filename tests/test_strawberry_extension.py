@@ -122,7 +122,7 @@ def test_complexity_with_a_complex_query():
         }
     """
 
-    result = _execute_with_complexity(query, SimpleEstimator(0, 1))
+    result = _execute_with_complexity(query, SimpleEstimator(0))
 
     assert result.extensions["complexity"]["value"] == 0
 
@@ -242,7 +242,7 @@ def test_extension_does_not_resolve_fields_when_limiting():
     # Attempt to execute a query with a complexity of 10, but the max complexity is 1
     # The resolver should not be called
     extension = build_complexity_extension(
-        estimator=SimpleEstimator(10, 1),
+        estimator=SimpleEstimator(10),
         max_complexity=1,
     )
     schema = strawberry.Schema(query=Query, extensions=[extension])
@@ -253,7 +253,7 @@ def test_extension_does_not_resolve_fields_when_limiting():
     # Confirm if the resolver is called when the complexity is within the limit
     # The resolver should be called
     extension = build_complexity_extension(
-        estimator=SimpleEstimator(1, 1),
+        estimator=SimpleEstimator(1),
         max_complexity=1,
     )
     schema = strawberry.Schema(query=Query, extensions=[extension])

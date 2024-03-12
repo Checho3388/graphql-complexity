@@ -7,7 +7,7 @@ from tests import ut_utils
 
 
 def _evaluate_complexity(query: str, estimator=None):
-    estimator = estimator or SimpleEstimator(1, 1)
+    estimator = estimator or SimpleEstimator(1)
     schema = build_schema(ut_utils.schema)
     return get_complexity(query, schema, estimator)
 
