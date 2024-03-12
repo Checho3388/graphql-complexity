@@ -38,6 +38,20 @@ def test_complexity_reads_count_from_query_args_with_different_name():
     assert complexity == 12
 
 
+def test_complexity_with_arg_name_unset_ignores_lists():
+    query = """query {
+        droid {
+            friends(first: 10) {
+                name
+            }
+        }
+      }"""
+
+    complexity = get_complexity(query, build_schema(schema), SimpleEstimator(), Config(count_arg_name=None))
+
+    assert complexity == 3
+
+
 def test_complexity_config_allows_penalizing_missing_count_argument():
     query = """query {
         droid {
