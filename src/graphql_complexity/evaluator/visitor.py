@@ -1,25 +1,17 @@
 from typing import Any
 
 from graphql import (
-    SKIP,
-    BooleanValueNode,
     DirectiveNode,
-    FragmentDefinitionNode,
     GraphQLIncludeDirective,
-    GraphQLList,
     GraphQLSkipDirective,
-    OperationDefinitionNode,
     TypeInfo,
-    VariableNode,
-    Visitor,
-    get_named_type,
-    is_introspection_type
+    Visitor
 )
 
 from graphql_complexity.estimators.base import ComplexityEstimator
-from .nodes import ComplexityNode, FragmentNode, Field
-
-UNNAMED_OPERATION = "UnnamedOperation"
+from . import nodes
+from .utils import get_node_argument_value
+from ..config import Config
 
 
 class ComplexityVisitor(Visitor):
@@ -34,27 +26,30 @@ class ComplexityVisitor(Visitor):
     the fields in the operation.
     """
 
-    def __init__(self, estimator: ComplexityEstimator, type_info: TypeInfo, variables: dict[str, Any] | None = None):
+    def __init__(
+            self,
+            estimator: ComplexityEstimator,
+            type_info: TypeInfo,
+            config: Config = None,
+            variables: dict[str, Any] | None = None,
+    ):
         if not isinstance(estimator, ComplexityEstimator):
             raise ValueError("Estimator must be of type 'ComplexityEstimator'")
+        self.config = config or Config()
         self.estimator: ComplexityEstimator = estimator
         self.variables = variables or {}
         self.type_info = type_info
-        self._operations: dict[str, list[ComplexityNode]] = {}
-        self._fragments: dict[str, list[ComplexityNode]] = {}
-        self._current_complexity_stack: list[ComplexityNode] = []
-        self._multipliers_stack = [1]
+        self.fragments: dict[str, nodes.ComplexityNode] = {}
+        self.current_node = nodes.RootNode(name="root")
+        self._previous_current_node = None
         self._ignore_until_leave = None
         super().__init__()
 
     def evaluate(self) -> int:
         """Evaluate the complexity of the operations after visiting the document."""
-        complexity = 0
-        for operation in self._operations.values():
-            complexity += sum(
-                n.evaluate(fragments_definition=self._fragments) for n in operation
-            )
-        return complexity
+        return self.current_node.evaluate(
+            fragments_definition=self.fragments
+        )
 
     def enter_variable_definition(self, node, key, parent, path, ancestors):
         input_variable = self.variables.get(node.variable.name.value)
@@ -65,98 +60,42 @@ class ComplexityVisitor(Visitor):
         if not should_include_field(node, self.variables):
             # Pop the last node added (parent) and ignore the next fields until the
             # parent field is left.
-            self._ignore_until_leave = self._current_complexity_stack.pop()
-
-    def enter_selection_set(self, node, key, parent, path, ancestors):
-        if isinstance(parent, (OperationDefinitionNode, FragmentDefinitionNode)):
-            self._multipliers_stack = [1]
-        else:
-            multiplier = self.estimator.get_field_multiplier(
-                node, key, parent, path, ancestors
-            )
-            self._multipliers_stack.append(multiplier * self._multipliers_stack[-1])
-
-    def leave_selection_set(self, *args, **kwargs):
-        self._multipliers_stack.pop()
-
-    def enter_operation_definition(self, *args, **kwargs):
-        """Reset the current complexity list on every new operation."""
-        self._current_complexity_stack = []
-
-    def leave_operation_definition(self, node, *args, **kwargs):
-        """Add the current complexity list to the operations dict."""
-        operation_name = node.name.value if node.name else UNNAMED_OPERATION
-        self._operations[operation_name] = self._current_complexity_stack
+            self.current_node = nodes.SkippedField.wrap(self.current_node)
 
     def enter_field(self, node, key, parent, path, ancestors):
         """Add the complexity of the current field to the current complexity list."""
-        wrapped_type = self.type_info.get_type()
-        if isinstance(wrapped_type, GraphQLList):
-            # ToDo: handle lists with complexity measure
-            pass
-        type_ = get_named_type(wrapped_type)
-        if type_ is not None and is_introspection_type(type_):
-            # Skip introspection fields
-            return SKIP
+        complexity = self.estimator.get_field_complexity(node, self.type_info, path)
 
-        if self._ignore_until_leave is not None:
-            # Skip fields until the parent field is left
-            return SKIP
-
-        complexity = self.estimator.get_field_complexity(
-            node, key, parent, path, ancestors
-        )
-        self._current_complexity_stack.append(
-            Field(
-                name=node.name.value,
-                complexity=complexity,
-                multiplier=self._multipliers_stack[-1],
-            )
-        )
+        cn = nodes.build_node(node, self.type_info, complexity, self.variables, self.config)
+        self.current_node.add_child(cn)
+        self.current_node = cn
 
     def leave_field(self, node, key, parent, path, ancestors):
-        if (
-            self._ignore_until_leave is not None
-            and node.name.value == self._ignore_until_leave.name
-        ):
-            # If we are leaving the ignored node, reset the flag
-            self._ignore_until_leave = None
+        self.current_node = self.current_node.parent
 
     def enter_fragment_definition(self, *args, **kwargs):
         """Start a new complexity list for the current fragment."""
-        self._current_complexity_stack = []
+        self._previous_current_node = self.current_node
+        self.current_node = nodes.RootNode(name="fragment")
 
     def leave_fragment_definition(self, node, *args, **kwargs):
         """Add the current complexity list to the fragments dict."""
-        self._fragments[node.name.value] = self._current_complexity_stack
+        self.fragments[node.name.value] = self.current_node
+        self.current_node = self._previous_current_node
 
     def enter_fragment_spread(self, node, *args, **kwargs):
         """Add a lazy fragment to the current complexity list."""
-        self._current_complexity_stack.append(FragmentNode(name=node.name.value))
-
-    def enter_inline_fragment(self, *args, **kwargs):
-        """Start a new complexity list for the current inline fragment."""
-        self._current_complexity_stack = []
+        self.current_node.add_child(nodes.FragmentNode(name=node.name.value))
 
 
 def should_include_field(node: DirectiveNode, variables: dict[str, Any]) -> bool:
     """Check if a field should be ignored based on the 'skip' and 'include' directives."""
     if node.name.value == GraphQLIncludeDirective.name:
-        return get_directive_if_value(node, variables)
+        value = get_node_argument_value(node=node, arg_name="if", variables=variables)
+        return bool(value)
 
     if node.name.value == GraphQLSkipDirective.name:
-        return not get_directive_if_value(node, variables)
+        value = get_node_argument_value(node=node, arg_name="if", variables=variables)
+        return not bool(value)
 
     return True
-
-
-def get_directive_if_value(directive: DirectiveNode, variables: dict[str, Any]) -> bool:
-    """Returns the value of the `if` argument from the Directive. Used to get the boolean
-    value for skip/include directives."""
-    if_arg = next(arg for arg in directive.arguments if arg.name.value == "if")
-    if isinstance(if_arg.value, VariableNode):
-        return bool(variables.get(if_arg.value.name.value))
-    elif isinstance(if_arg.value, BooleanValueNode):
-        return bool(if_arg.value.value)
-
-    raise ValueError("Value for `if` argument not found")
