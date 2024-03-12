@@ -40,16 +40,17 @@ class ComplexityVisitor(Visitor):
         self.variables = variables or {}
         self.type_info = type_info
         self.fragments: dict[str, nodes.ComplexityNode] = {}
-        self.current_node = nodes.RootNode(name="root")
+        self.root = nodes.RootNode(name="root")
+        self.current_node = self.root
         self._previous_current_node = None
-        self._ignore_until_leave = None
         super().__init__()
 
-    def evaluate(self) -> int:
-        """Evaluate the complexity of the operations after visiting the document."""
-        return self.current_node.evaluate(
-            fragments_definition=self.fragments
-        )
+    @property
+    def complexity_tree(self) -> nodes.ComplexityNode:
+        """Return the complexity tree after visiting the document.
+        The tree is represented by a RootNode with the complexity of the operations
+        represented as Node children. Each node is evaluated returning the complexity."""
+        return self.root
 
     def enter_variable_definition(self, node, key, parent, path, ancestors):
         input_variable = self.variables.get(node.variable.name.value)
@@ -85,7 +86,12 @@ class ComplexityVisitor(Visitor):
 
     def enter_fragment_spread(self, node, *args, **kwargs):
         """Add a lazy fragment to the current complexity list."""
-        self.current_node.add_child(nodes.FragmentNode(name=node.name.value))
+        self.current_node.add_child(
+            nodes.FragmentSpreadNode(
+                name=node.name.value,
+                fragments_definition=self.fragments
+            )
+        )
 
 
 def should_include_field(node: DirectiveNode, variables: dict[str, Any]) -> bool:

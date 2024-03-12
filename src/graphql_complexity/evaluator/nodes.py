@@ -21,57 +21,54 @@ class ComplexityNode:
     parent: 'ComplexityNode' = None
     children: list['ComplexityNode'] = dataclasses.field(default_factory=list)
 
-    def evaluate(self, *args, **kwargs) -> int:
+    def evaluate(self) -> int:
         raise NotImplementedError
 
-    def describe(self, depth=0):
+    def describe(self, depth=0) -> str:
+        """Return a friendly representation of the node and its children complexity."""
         return (
             f"{chr(9) * depth}{self.name} ({self.__class__.__name__}) = {self.evaluate()}" +
             f"{chr(10) if self.children else ''}" +
             '\n'.join(c.describe(depth=depth+1) for c in self.children)
         )
 
-    def add_child(self, node: 'ComplexityNode'):
+    def add_child(self, node: 'ComplexityNode') -> None:
+        """Add a child to the current node."""
         self.children.append(node)
         node.parent = self
 
 
 @dataclasses.dataclass(slots=True, kw_only=True)
 class RootNode(ComplexityNode):
-    def evaluate(self, *args, **kwargs) -> int:
-        return sum(
-            child.evaluate(*args, **kwargs) for child in self.children
-        )
+    def evaluate(self) -> int:
+        return sum(child.evaluate() for child in self.children)
 
 
 @dataclasses.dataclass(slots=True, kw_only=True)
-class FragmentNode(ComplexityNode):
+class FragmentSpreadNode(ComplexityNode):
+    fragments_definition: dict
 
-    def evaluate(self, *, fragments_definition: dict[str, "ComplexityNode"]):
-        fragment = fragments_definition.get(self.name)
+    def evaluate(self):
+        fragment = self.fragments_definition.get(self.name)
         if not fragment:
             return 0
-        return fragment.evaluate(fragments_definition=fragments_definition)
+        return fragment.evaluate()
 
 
 @dataclasses.dataclass(slots=True, kw_only=True)
 class Field(ComplexityNode):
     complexity: int
 
-    def evaluate(self, *args, **kwargs) -> int:
-        return self.complexity + sum(
-            child.evaluate(*args, **kwargs) for child in self.children
-        )
+    def evaluate(self) -> int:
+        return self.complexity + sum(child.evaluate() for child in self.children)
 
 
 @dataclasses.dataclass(slots=True, kw_only=True)
 class ListField(Field):
     count: int = 1
 
-    def evaluate(self, *args, **kwargs) -> int:
-        return self.complexity + self.count * sum(
-            child.evaluate(*args, **kwargs) for child in self.children
-        )
+    def evaluate(self) -> int:
+        return self.complexity + self.count * sum(child.evaluate() for child in self.children)
 
 
 @dataclasses.dataclass(slots=True, kw_only=True)
@@ -90,14 +87,14 @@ class SkippedField(ComplexityNode):
         node.parent.add_child(wrapper)
         return wrapper
 
-    def evaluate(self, *args, **kwargs) -> int:
+    def evaluate(self) -> int:
         return 0
 
 
 @dataclasses.dataclass(slots=True, kw_only=True)
 class MetaField(ComplexityNode):
 
-    def evaluate(self, *args, **kwargs) -> int:
+    def evaluate(self) -> int:
         return 0
 
 
