@@ -1,29 +1,37 @@
 from graphql import build_schema
 
 schema_sdl = """
-type Query {
-  hero(episode: Episode): Character
-  droid(id: ID!): Droid
-  version: String
-}
+enum Episode { NEW_HOPE, EMPIRE, JEDI }
 
-type Character {
-  name: String!
-  appearsIn: [Episode!]!
-}
-
-type Droid {
-  id: ID!
-  name: String!
+interface Character {
+  id: String!
+  name: String
   friends: [Character]
-  appearsIn: [Episode]!
+  appearsIn: [Episode]
+}
+
+type Human implements Character {
+  id: String!
+  name: String
+  friends: [Character]
+  appearsIn: [Episode]
+  homePlanet: String
+}
+
+type Droid implements Character {
+  id: String!
+  name: String
+  friends (first: Int, after: Int): [Character]
+  appearsIn: [Episode]
   primaryFunction: String
 }
 
-enum Episode {
-  NEWHOPE
-  EMPIRE
-  JEDI
-}"""
+type Query {
+  version: String
+  hero(episode: Episode): Character
+  human(id: String!): Human
+  droid(id: String!): Droid
+}
+"""
 
 schema = build_schema(schema_sdl)

@@ -5,6 +5,8 @@ from strawberry.extensions import SchemaExtension
 
 from graphql_complexity import DirectivesEstimator
 from graphql_complexity.evaluator import get_ast_complexity
+from graphql_complexity import get_complexity
+from graphql_complexity.estimators import ComplexityEstimator
 
 
 def build_complexity_extension_using_directive_estimator(
@@ -17,8 +19,8 @@ def build_complexity_extension_using_directive_estimator(
             self,
         ):
             estimator = DirectivesEstimator(self.execution_context.schema.as_str())
-            self.estimated_complexity = get_ast_complexity(
-                ast=self.execution_context.graphql_document,
+            self.estimated_complexity = get_complexity(
+                query=self.execution_context.query,
                 schema=self.execution_context.schema._schema,
                 estimator=estimator,
             )

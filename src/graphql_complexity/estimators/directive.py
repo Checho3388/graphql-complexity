@@ -67,7 +67,7 @@ class DirectivesEstimator(ComplexityEstimator):
         visit(ast, visitor)
         return collector
 
-    def get_field_complexity(self, node, key, parent, path, ancestors) -> int:
+    def get_field_complexity(self, node, type_info, path) -> int:
         return self.__complexity_map.get(node.name.value, self.__default_complexity)
 
     def get_field_multiplier(self, node, key, parent, path, ancestors) -> int:
