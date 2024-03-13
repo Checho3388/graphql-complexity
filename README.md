@@ -139,7 +139,7 @@ extension and add it to the schema. This method receives an estimator and return
 
 ```python
 import strawberry
-from graphql_complexity.estimators import SimpleEstimator
+from graphql_complexity import SimpleEstimator
 from graphql_complexity.extensions.strawberry_graphql import build_complexity_extension
 
 
