@@ -3,8 +3,8 @@ from typing import Type
 from graphql import GraphQLError
 from strawberry.extensions import SchemaExtension
 
+from graphql_complexity import get_complexity
 from graphql_complexity.estimators import ComplexityEstimator
-from graphql_complexity.evaluator import get_ast_complexity
 
 
 def build_complexity_extension(
@@ -17,8 +17,8 @@ def build_complexity_extension(
         def on_validate(
             self,
         ):
-            self.estimated_complexity = get_ast_complexity(
-                ast=self.execution_context.graphql_document,
+            self.estimated_complexity = get_complexity(
+                query=self.execution_context.query,
                 schema=self.execution_context.schema._schema,
                 estimator=estimator
             )
