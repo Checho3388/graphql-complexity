@@ -1,6 +1,6 @@
 from typing import Any
 
-from graphql import Visitor, parse, visit, DirectiveNode, DirectiveDefinitionNode, BooleanValueNode, IntValueNode
+from graphql import DirectiveNode, IntValueNode, Visitor, parse, visit
 
 from graphql_complexity.estimators.base import ComplexityEstimator
 
@@ -12,6 +12,7 @@ DEFAULT_COMPLEXITY_VALUE = 1
 class SchemaDirectivesVisitor(Visitor):
     """Visitor that visits the schema and collects the complexity definition for every
     fields"""
+
     def __init__(self, schema_directive_name: str, collector: dict[str, int]):
         self._collector = collector
         self.schema_directive_name = schema_directive_name
@@ -46,6 +47,7 @@ class DirectivesEstimator(ComplexityEstimator):
             - otherField: 1
         And the total complexity will be 6.
     """
+
     schema_directives: dict[str, Any]
 
     def __init__(
@@ -63,7 +65,9 @@ class DirectivesEstimator(ComplexityEstimator):
     def collect_from_schema(schema: str, schema_directive_name: str) -> dict[str, int]:
         collector: dict[str, Any] = {}
         ast = parse(schema)
-        visitor = SchemaDirectivesVisitor(collector=collector, schema_directive_name=schema_directive_name)
+        visitor = SchemaDirectivesVisitor(
+            collector=collector, schema_directive_name=schema_directive_name
+        )
         visit(ast, visitor)
         return collector
 
@@ -77,8 +81,12 @@ class DirectivesEstimator(ComplexityEstimator):
 
 def get_complexity_directive(node) -> DirectiveNode | None:
     return next(
-        (d for d in node.directives if d.name.value == DEFAULT_COMPLEXITY_DIRECTIVE_NAME),
-        None
+        (
+            d
+            for d in node.directives
+            if d.name.value == DEFAULT_COMPLEXITY_DIRECTIVE_NAME
+        ),
+        None,
     )
 
 
@@ -87,7 +95,8 @@ def parse_complexity_directive(directive: DirectiveNode) -> int | None:
         (
             int(arg.value.value)
             for arg in directive.arguments
-            if arg.name.value == DIRECTIVE_ESTIMATOR_FIELD_COMPLEXITY_NAME and isinstance(arg.value, IntValueNode)
+            if arg.name.value == DIRECTIVE_ESTIMATOR_FIELD_COMPLEXITY_NAME
+            and isinstance(arg.value, IntValueNode)
         ),
-        None
+        None,
     )

@@ -5,7 +5,7 @@ from graphql import (
     GraphQLIncludeDirective,
     GraphQLSkipDirective,
     TypeInfo,
-    Visitor
+    Visitor,
 )
 
 from graphql_complexity.estimators.base import ComplexityEstimator
@@ -27,11 +27,11 @@ class ComplexityVisitor(Visitor):
     """
 
     def __init__(
-            self,
-            estimator: ComplexityEstimator,
-            type_info: TypeInfo,
-            config: Config = None,
-            variables: dict[str, Any] | None = None,
+        self,
+        estimator: ComplexityEstimator,
+        type_info: TypeInfo,
+        config: Config = None,
+        variables: dict[str, Any] | None = None,
     ):
         if not isinstance(estimator, ComplexityEstimator):
             raise ValueError("Estimator must be of type 'ComplexityEstimator'")
@@ -50,7 +50,8 @@ class ComplexityVisitor(Visitor):
     def complexity_tree(self) -> nodes.ComplexityNode:
         """Return the complexity tree after visiting the document.
         The tree is represented by a RootNode with the complexity of the operations
-        represented as Node children. Each node is evaluated returning the complexity."""
+        represented as Node children. Each node is evaluated returning the complexity.
+        """
         return self.root
 
     def enter_variable_definition(self, node, key, parent, path, ancestors):
@@ -66,14 +67,16 @@ class ComplexityVisitor(Visitor):
 
     @property
     def current_node_path(self) -> str:
-        return '.'.join(self.node_path)
+        return ".".join(self.node_path)
 
     def enter_field(self, node, key, parent, path, ancestors):
         """Add the complexity of the current field to the current complexity list."""
         self.node_path.append(node.name.value)
         complexity = self.estimator.get_field_complexity(node, self.type_info, path)
 
-        cn = nodes.build_node(node, self.type_info, complexity, self.variables, self.config)
+        cn = nodes.build_node(
+            node, self.type_info, complexity, self.variables, self.config
+        )
         self.current_node.add_child(cn)
         self.current_node = cn
 
@@ -95,8 +98,7 @@ class ComplexityVisitor(Visitor):
         """Add a lazy fragment to the current complexity list."""
         self.current_node.add_child(
             nodes.FragmentSpreadNode(
-                name=node.name.value,
-                fragments_definition=self.fragments
+                name=node.name.value, fragments_definition=self.fragments
             )
         )
 

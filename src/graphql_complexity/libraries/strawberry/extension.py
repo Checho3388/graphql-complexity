@@ -3,10 +3,7 @@ from typing import Type
 from graphql import GraphQLError
 from strawberry.extensions import SchemaExtension
 
-from graphql_complexity import DirectivesEstimator
-from graphql_complexity.evaluator import get_ast_complexity
-from graphql_complexity import get_complexity
-from graphql_complexity.estimators import ComplexityEstimator
+from graphql_complexity import DirectivesEstimator, get_complexity
 
 
 def build_complexity_extension_using_directive_estimator(

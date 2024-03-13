@@ -3,10 +3,11 @@ import logging
 from typing import Any
 
 from graphql import (
+    FieldNode,
     GraphQLList,
     TypeInfo,
     get_named_type,
-    is_introspection_type, FieldNode
+    is_introspection_type,
 )
 
 from graphql_complexity.config import Config
@@ -18,8 +19,8 @@ logger = logging.getLogger(__name__)
 @dataclasses.dataclass(slots=True, kw_only=True)
 class ComplexityNode:
     name: str
-    parent: 'ComplexityNode' = None
-    children: list['ComplexityNode'] = dataclasses.field(default_factory=list)
+    parent: "ComplexityNode" = None
+    children: list["ComplexityNode"] = dataclasses.field(default_factory=list)
 
     def evaluate(self) -> int:
         raise NotImplementedError
@@ -27,12 +28,12 @@ class ComplexityNode:
     def describe(self, depth=0) -> str:
         """Return a friendly representation of the node and its children complexity."""
         return (
-            f"{chr(9) * depth}{self.name} ({self.__class__.__name__}) = {self.evaluate()}" +
-            f"{chr(10) if self.children else ''}" +
-            '\n'.join(c.describe(depth=depth+1) for c in self.children)
+            f"{chr(9) * depth}{self.name} ({self.__class__.__name__}) = {self.evaluate()}"
+            + f"{chr(10) if self.children else ''}"
+            + "\n".join(c.describe(depth=depth + 1) for c in self.children)
         )
 
-    def add_child(self, node: 'ComplexityNode') -> None:
+    def add_child(self, node: "ComplexityNode") -> None:
         """Add a child to the current node."""
         self.children.append(node)
         node.parent = self
@@ -68,7 +69,9 @@ class ListField(Field):
     count: int = 1
 
     def evaluate(self) -> int:
-        return self.complexity + self.count * sum(child.evaluate() for child in self.children)
+        return self.complexity + self.count * sum(
+            child.evaluate() for child in self.children
+        )
 
 
 @dataclasses.dataclass(slots=True, kw_only=True)
@@ -118,15 +121,23 @@ def build_node(
     )
 
 
-def build_list_node(node: FieldNode, complexity: int, variables: dict[str, Any], config: Config) -> ListField:
+def build_list_node(
+    node: FieldNode, complexity: int, variables: dict[str, Any], config: Config
+) -> ListField:
     """Build a list complexity node from a field node."""
     if config.count_arg_name:
         try:
             count = int(
-                get_node_argument_value(node=node, arg_name=config.count_arg_name, variables=variables)
+                get_node_argument_value(
+                    node=node, arg_name=config.count_arg_name, variables=variables
+                )
             )
         except ValueError:
-            logger.debug("Missing or invalid value for argument '%s' in node '%s'", config.count_arg_name, node)
+            logger.debug(
+                "Missing or invalid value for argument '%s' in node '%s'",
+                config.count_arg_name,
+                node,
+            )
             count = config.count_missing_arg_value
     else:
         count = 1

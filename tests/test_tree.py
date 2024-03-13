@@ -1,5 +1,4 @@
 import pytest
-from graphql import build_schema
 
 from graphql_complexity import SimpleEstimator
 from graphql_complexity.evaluator.complexity import build_complexity_tree
@@ -9,8 +8,7 @@ from tests import ut_utils
 
 def _build_complexity_tree(query: str, estimator=None):
     estimator = estimator or SimpleEstimator(1)
-    schema = build_schema(ut_utils.schema)
-    return build_complexity_tree(query, schema, estimator)
+    return build_complexity_tree(query, ut_utils.schema, estimator)
 
 
 def test_tree_describes_simple_query():
