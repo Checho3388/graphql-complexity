@@ -58,7 +58,7 @@ query = """
 complexity = get_complexity(
     query=query, 
     schema=schema,
-    estimator=SimpleEstimator(complexity=1, multiplier=10)
+    estimator=SimpleEstimator(complexity=10)
 )
 if complexity > 10:
     raise Exception("Query is too complex")
@@ -80,7 +80,7 @@ complexity value to each field and multiplies it by another constant, which is p
 from graphql_complexity import SimpleEstimator
 
 
-estimator = SimpleEstimator(complexity=2, multiplier=1)
+estimator = SimpleEstimator(complexity=2)
 ```
 
 ### DirectivesEstimator
@@ -115,12 +115,9 @@ from graphql_complexity import ComplexityEstimator
 
 
 class CustomEstimator(ComplexityEstimator):
-    def get_field_complexity(self, node, key, parent, path, ancestors) -> int:
+    def get_field_complexity(self, node, type_info, path) -> int:
         if node.name.value == "specificField":
             return 100
-        return 1
-
-    def get_field_multiplier(self, node, key, parent, path, ancestors) -> int:
         return 1
 ```
 
