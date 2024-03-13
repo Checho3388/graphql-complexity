@@ -30,7 +30,7 @@ class ComplexityVisitor(Visitor):
         self,
         estimator: ComplexityEstimator,
         type_info: TypeInfo,
-        config: Config = None,
+        config: Config | None = None,
         variables: dict[str, Any] | None = None,
     ):
         if not isinstance(estimator, ComplexityEstimator):
@@ -42,8 +42,8 @@ class ComplexityVisitor(Visitor):
         self.node_path: list[str] = []
         self.fragments: dict[str, nodes.ComplexityNode] = {}
         self.root = nodes.RootNode(name="root")
-        self.current_node = self.root
-        self._previous_current_node = None
+        self.current_node: nodes.ComplexityNode = self.root
+        self._previous_current_node: nodes.ComplexityNode
         super().__init__()
 
     @property

@@ -1,6 +1,6 @@
 import dataclasses
 import logging
-from typing import Any
+from typing import Any, Optional
 
 from graphql import (
     FieldNode,
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 @dataclasses.dataclass(slots=True, kw_only=True)
 class ComplexityNode:
     name: str
-    parent: "ComplexityNode" = None
+    parent: Optional["ComplexityNode"] = None
     children: list["ComplexityNode"] = dataclasses.field(default_factory=list)
 
     def evaluate(self) -> int:
@@ -86,8 +86,9 @@ class SkippedField(ComplexityNode):
             children=node.children,
             wraps=node,
         )
-        node.parent.children.remove(node)
-        node.parent.add_child(wrapper)
+        if node.parent:
+            node.parent.children.remove(node)
+            node.parent.add_child(wrapper)
         return wrapper
 
     def evaluate(self) -> int:

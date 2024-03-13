@@ -10,7 +10,7 @@ def build_complexity_extension_using_directive_estimator(
     max_complexity: int | None = None,
 ) -> Type[SchemaExtension]:
     class ComplexityExtension(SchemaExtension):
-        estimated_complexity: int | None = None
+        estimated_complexity: int
 
         def on_validate(
             self,

@@ -10,7 +10,7 @@ def get_complexity(
     query: str,
     schema: GraphQLSchema,
     estimator: ComplexityEstimator,
-    config: Config = None,
+    config: Config | None = None,
 ) -> int:
     """Calculate the complexity of a query using the provided estimator."""
     tree = build_complexity_tree(query, schema, estimator, config)
