@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "graphql_complexity"
-version = "0.3.1"
+version = "0.3.2"
 description = "A python library that provides complexity calculation helpers for GraphQL"
 authors = ["Checho3388 <ezequiel.grondona@gmail.com>"]
 packages = [
