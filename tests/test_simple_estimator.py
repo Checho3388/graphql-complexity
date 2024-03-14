@@ -139,7 +139,7 @@ def test_complexity_with_other_directives_not_affecting_evaluation():
 
 def test_simple_estimator_should_not_allow_negative_cost():
     """It should now allow negative cost"""
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"^'complexity' must be a positive integer \(greater or equal than 0\)$"):
         SimpleEstimator(-1)
 
 
