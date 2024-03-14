@@ -10,7 +10,7 @@ from graphql import (
 )
 
 from graphql_complexity.config import Config
-from graphql_complexity.evaluator.utils import get_node_argument_value
+from graphql_complexity.evaluator.utils import get_node_argument_value, is_meta_type
 
 logger = logging.getLogger(__name__)
 
@@ -107,8 +107,7 @@ def build_node(
 ) -> ComplexityNode:
     """Build a complexity node from a field node."""
     type_ = type_info.get_type()
-    unwrapped_type = get_named_type(type_)
-    if unwrapped_type is not None and is_introspection_type(unwrapped_type):
+    if is_meta_type(type_, node):
         return MetaField(name=node.name.value)
     if isinstance(type_, GraphQLList):
         return build_list_node(node, complexity, variables, config)
