@@ -24,6 +24,16 @@ def test_one_field_simple_complexity_calculation():
     assert complexity == 1
 
 
+def test_typename_has_zero_complexity():
+    query = """query {
+        __typename
+    }"""
+
+    complexity = _evaluate_complexity(query)
+
+    assert complexity == 0
+
+
 def test_two_fields_simple_complexity_calculation():
     query = """
         query Something {
