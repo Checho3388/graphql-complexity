@@ -156,9 +156,7 @@ def test_complexity_visitor_handles_input_arguments():
 
 
 def test_visitor_should_raise_when_no_estimator_is_given():
-    with pytest.raises(
-        ValueError, match="Estimator must be of type 'ComplexityEstimator'"
-    ):
+    with pytest.raises(ValueError, match=r"^Estimator must be of type 'ComplexityEstimator'$"):
         ComplexityVisitor(estimator=None, type_info=None)
 
 
