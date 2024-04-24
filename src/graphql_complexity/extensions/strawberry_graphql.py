@@ -12,7 +12,7 @@ def build_complexity_extension(
     max_complexity: int | None = None,
 ) -> Type[SchemaExtension]:
     class ComplexityExtension(SchemaExtension):
-        estimated_complexity: int | None = None
+        estimated_complexity: int
 
         def on_validate(
             self,

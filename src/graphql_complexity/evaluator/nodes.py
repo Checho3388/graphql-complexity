@@ -5,8 +5,7 @@ from typing import Any
 from graphql import (
     GraphQLList,
     TypeInfo,
-    get_named_type,
-    is_introspection_type, FieldNode
+    FieldNode,
 )
 
 from graphql_complexity.config import Config
@@ -15,7 +14,7 @@ from graphql_complexity.evaluator.utils import get_node_argument_value, is_meta_
 logger = logging.getLogger(__name__)
 
 
-@dataclasses.dataclass(slots=True, kw_only=True)
+@dataclasses.dataclass(kw_only=True)
 class ComplexityNode:
     name: str
     parent: 'ComplexityNode' = None
@@ -34,17 +33,18 @@ class ComplexityNode:
 
     def add_child(self, node: 'ComplexityNode') -> None:
         """Add a child to the current node."""
+        if not isinstance(node, ComplexityNode):
+            raise TypeError(f"Children must be ComplexityNode instances, got {type(node)}")
         self.children.append(node)
         node.parent = self
 
 
-@dataclasses.dataclass(slots=True, kw_only=True)
 class RootNode(ComplexityNode):
     def evaluate(self) -> int:
         return sum(child.evaluate() for child in self.children)
 
 
-@dataclasses.dataclass(slots=True, kw_only=True)
+@dataclasses.dataclass
 class FragmentSpreadNode(ComplexityNode):
     fragments_definition: dict
 
@@ -55,7 +55,7 @@ class FragmentSpreadNode(ComplexityNode):
         return fragment.evaluate()
 
 
-@dataclasses.dataclass(slots=True, kw_only=True)
+@dataclasses.dataclass
 class Field(ComplexityNode):
     complexity: int
 
@@ -63,15 +63,15 @@ class Field(ComplexityNode):
         return self.complexity + sum(child.evaluate() for child in self.children)
 
 
-@dataclasses.dataclass(slots=True, kw_only=True)
+@dataclasses.dataclass
 class ListField(Field):
-    count: int = 1
+    count: int
 
     def evaluate(self) -> int:
         return self.complexity + self.count * sum(child.evaluate() for child in self.children)
 
 
-@dataclasses.dataclass(slots=True, kw_only=True)
+@dataclasses.dataclass
 class SkippedField(ComplexityNode):
     wraps: ComplexityNode
 
@@ -91,7 +91,6 @@ class SkippedField(ComplexityNode):
         return 0
 
 
-@dataclasses.dataclass(slots=True, kw_only=True)
 class MetaField(ComplexityNode):
 
     def evaluate(self) -> int:
