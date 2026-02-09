@@ -1,4 +1,4 @@
-[![](https://github.com/Checho3388/graphql-complexity/raw/main/.github/logo.png)](https://github.com/Checho3388/graphql-complexity/raw/main/.github/logo.png)
+[![GraphQL Complexity Logo](https://github.com/Checho3388/graphql-complexity/raw/main/.github/logo.png)](https://github.com/Checho3388/graphql-complexity/raw/main/.github/logo.png)
 
 # GraphQL Complexity
 
@@ -17,24 +17,24 @@ Welcome to GraphQL-Complexity! This Python library provides functionality to com
 
 ## Table of Contents
 
-- [Installation](#installation-quick-start)
-- [Getting Started](#getting-started)
-- [Estimators](#estimators)
-  - [SimpleEstimator](#simpleestimator)
-  - [DirectivesEstimator](#directivesestimator)
-  - [Custom Estimator](#custom-estimator)
-- [Advanced Examples](#advanced-examples)
-  - [Handling Fragments](#handling-fragments)
-  - [Complex Nested Queries](#complex-nested-queries)
-  - [Working with Arguments](#working-with-arguments)
-  - [Combining Multiple Estimators](#combining-multiple-estimators)
-- [Framework Integration](#framework-integration)
-  - [Strawberry GraphQL](#strawberry-graphql)
-  - [Django Integration](#django-integration)
-  - [FastAPI Integration](#fastapi-integration)
-  - [Flask Integration](#flask-integration)
-- [Real-World Use Cases](#real-world-use-cases)
-- [Credits](#credits)
+* [Installation](#installation-quick-start)
+* [Getting Started](#getting-started)
+* [Estimators](#estimators)
+  * [SimpleEstimator](#simpleestimator)
+  * [DirectivesEstimator](#directivesestimator)
+  * [Custom Estimator](#custom-estimator)
+* [Advanced Examples](#advanced-examples)
+  * [Handling Fragments](#handling-fragments)
+  * [Complex Nested Queries](#complex-nested-queries)
+  * [Working with Arguments](#working-with-arguments)
+  * [Combining Multiple Estimators](#combining-multiple-estimators)
+* [Framework Integration](#framework-integration)
+  * [Strawberry GraphQL](#strawberry-graphql)
+  * [Django Integration](#django-integration)
+  * [FastAPI Integration](#fastapi-integration)
+  * [Flask Integration](#flask-integration)
+* [Real-World Use Cases](#real-world-use-cases)
+* [Credits](#credits)
 
 ## Installation (Quick Start)
 
