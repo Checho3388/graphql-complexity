@@ -11,9 +11,9 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/checkout@v4.2.2
       - name: Set up Python
-        uses: actions/setup-python@0a5c61591373683505ea898e09a3ee4f39ef2b9c # v5.0.0
+        uses: actions/setup-python@v5.4.0
         with:
           python-version: '3.x'
       - name: Install dependencies
@@ -23,4 +23,4 @@ jobs:
       - name: Build package
         run: python -m build
       - name: Publish package
-        uses: pypa/gh-action-pypi-publish@2f6f7335006b537f5d76d47b59e3559f27622c1b # v1.8.11
+        uses: pypa/gh-action-pypi-publish@v1.8.11
