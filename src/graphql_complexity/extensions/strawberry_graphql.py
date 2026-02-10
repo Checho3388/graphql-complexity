@@ -28,7 +28,7 @@ def build_complexity_extension(
                     f"Query is too complex. Max complexity is {max_complexity}, estimated "
                     f"complexity is {self.estimated_complexity}"
                 )
-                self.execution_context.errors = [error]
+                raise error
 
         def get_results(self):
             return {"complexity": {"value": self.estimated_complexity}}

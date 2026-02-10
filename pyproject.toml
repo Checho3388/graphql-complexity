@@ -25,7 +25,7 @@ keywords = ["graphql", "complexity", "query", "mutation", "subscription"]
 [tool.poetry.dependencies]
 python = "^3.10"
 graphql-core = "^3.2.3"
-strawberry-graphql = { version = "^0.219.2", optional = true }
+strawberry-graphql = "^0.291.3"
 
 [tool.poetry.extras]
 strawberry-graphql = ["strawberry-graphql"]
