@@ -8,6 +8,14 @@ Welcome to GraphQL-Complexity! This Python library provides functionality to com
 [![PyPI](https://img.shields.io/pypi/v/graphql-complexity?label=pypi%20package)](https://pypi.org/project/graphql-complexity/)
 [![codecov](https://codecov.io/gh/Checho3388/graphql-complexity/graph/badge.svg?token=4LH7AVN119)](https://codecov.io/gh/Checho3388/graphql-complexity)
 [![Downloads](https://static.pepy.tech/badge/graphql-complexity)](https://pepy.tech/project/graphql-complexity)
+[![Python Version](https://img.shields.io/pypi/pyversions/graphql-complexity)](https://pypi.org/project/graphql-complexity/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## ✨ Why GraphQL Complexity?
+
+Protect your GraphQL API from expensive queries and potential DoS attacks by calculating query complexity before execution.
+
+**5,500+ downloads** • **Used in production** • **Actively maintained**
 
 ## Features
 
