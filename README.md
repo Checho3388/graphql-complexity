@@ -7,6 +7,7 @@ Welcome to GraphQL-Complexity! This Python library provides functionality to com
 [![Build](https://github.com/Checho3388/graphql-complexity/actions/workflows/python-build.yml/badge.svg)](https://github.com/Checho3388/graphql-complexity/actions/workflows/python-build.yml/badge.svg)
 [![PyPI](https://img.shields.io/pypi/v/graphql-complexity?label=pypi%20package)](https://pypi.org/project/graphql-complexity/)
 [![codecov](https://codecov.io/gh/Checho3388/graphql-complexity/graph/badge.svg?token=4LH7AVN119)](https://codecov.io/gh/Checho3388/graphql-complexity)
+[![Downloads](https://static.pepy.tech/badge/graphql-complexity)](https://pepy.tech/project/graphql-complexity)
 
 ## Features
 
