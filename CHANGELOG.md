@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.2] - 2026-02-10
+
+This release focuses on broadening environment support, improving project documentation, and strengthening our testing suite.
+
+### 🌟 Highlights
+* **Python 3.13 Support:** We've officially added support for the latest Python release. Stay on the cutting edge without breaking your complexity logic.
+
+### 📝 Documentation & DX
+* **New Guidelines:** Added `CHANGELOG.md` and `CONTRIBUTING.md` to make it easier for the community to get involved.
+* **Better Examples:** Expanded the `README.md` with more detailed use cases to help you implement complex cost analysis faster.
+
+### 🛠️ Internal Improvements
+* **Unit Testing:** Significant improvements to the test suite to ensure better stability and reliability by @Checho3388 in #11
+
 ## [0.3.2] - 2024-03-14
 
 ### Added
