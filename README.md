@@ -99,6 +99,121 @@ if complexity > 10:
 The library exposes the method `get_complexity` with the algorithm to compute the complexity of a GraphQL operation.
 The algorithm visits each node of the query and computes the complexity of each field using an **estimator**.
 
+### Understanding Complexity Calculations with `explain_complexity`
+
+The library provides an `explain_complexity` function that offers detailed insights into how complexity is calculated. This debugging tool returns the inner details that led to the final complexity value, making it invaluable for:
+
+- **Debugging expensive queries** - Identify which fields contribute most to complexity
+- **Comparing different queries** - Understand why one query is more expensive than another
+- **Learning the library** - See exactly how the estimator evaluates each field
+- **Tuning estimators** - Fine-tune your complexity configuration
+
+```python
+from graphql_complexity import explain_complexity, SimpleEstimator
+from graphql import build_schema
+
+schema = build_schema("""
+    type User {
+        id: ID!
+        name: String!
+        posts: [Post!]!
+    }
+    type Post {
+        id: ID!
+        title: String!
+    }
+    type Query {
+        user: User
+    }
+""")
+
+query = """
+    query {
+        user {
+            id
+            name
+            posts {
+                id
+                title
+            }
+        }
+    }
+"""
+
+explanation = explain_complexity(
+    query=query,
+    schema=schema,
+    estimator=SimpleEstimator(complexity=5)
+)
+
+print(explanation)
+```
+
+**Example Output:**
+
+```
+================================================================================
+GraphQL Complexity Explanation
+================================================================================
+
+Total Complexity: 35
+
+Estimator Used:
+  Name: SimpleEstimator
+  Details:
+    complexity_constant: 5
+
+Complexity Tree:
+--------------------------------------------------------------------------------
+root (RootNode) = 35
+	user (Field) = 35
+		id (Field) = 5
+		name (Field) = 5
+		posts (ListField) = 25
+			id (Field) = 5
+			title (Field) = 5
+
+Field-by-Field Breakdown:
+--------------------------------------------------------------------------------
+user (Field)
+  Field complexity: 5
+  Children complexity: 30
+  Total: 35
+
+user.id (Field)
+  Field complexity: 5
+  Children complexity: 0
+  Total: 5
+
+user.name (Field)
+  Field complexity: 5
+  Children complexity: 0
+  Total: 5
+
+user.posts (ListField) [multiplier: 1]
+  Field complexity: 5
+  Children complexity: 10
+  Total: 25
+
+user.posts.id (Field)
+  Field complexity: 5
+  Children complexity: 0
+  Total: 5
+
+user.posts.title (Field)
+  Field complexity: 5
+  Children complexity: 0
+  Total: 5
+
+================================================================================
+```
+
+The explanation shows:
+- **Total Complexity**: The final calculated value
+- **Estimator Details**: Which estimator was used and its configuration
+- **Complexity Tree**: A hierarchical view of how complexity accumulates
+- **Field Breakdown**: Per-field analysis showing how each field contributes to the total
+
 ## Estimators
 
 GraphQL-Complexity provides various built-in estimators for computing query complexity:
