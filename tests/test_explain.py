@@ -1,19 +1,23 @@
 """Tests for the explain_complexity functionality."""
 
-from graphql import build_schema
-
+from graphql import (
+    build_schema,
+    FieldNode,
+)
 from graphql_complexity import (
-    explain_complexity,
-    SimpleEstimator,
-    DirectivesEstimator,
     get_complexity,
+    explain_complexity,
+    ComplexityEstimator,
+    DirectivesEstimator,
+    SimpleEstimator,
 )
 from graphql_complexity.evaluator.explain import ExplanationResult, FieldExplanation
 
 
 def test_explain_with_simple_estimator():
     """Test explain_complexity with SimpleEstimator."""
-    schema = build_schema("""
+    schema = build_schema(
+        """
         type Query {
             user: User
         }
@@ -21,7 +25,8 @@ def test_explain_with_simple_estimator():
             id: ID!
             name: String!
         }
-    """)
+    """
+    )
 
     query = """
         query {
@@ -33,15 +38,15 @@ def test_explain_with_simple_estimator():
     """
 
     explanation = explain_complexity(
-        query=query,
-        schema=schema,
-        estimator=SimpleEstimator(complexity=10)
+        query=query, schema=schema, estimator=SimpleEstimator(complexity=10)
     )
 
     assert isinstance(explanation, ExplanationResult)
     assert explanation.estimator_name == "SimpleEstimator"
     assert explanation.estimator_details["complexity_constant"] == 10
-    assert explanation.total_complexity == get_complexity(query, schema, SimpleEstimator(complexity=10))
+    assert explanation.total_complexity == get_complexity(
+        query, schema, SimpleEstimator(complexity=10)
+    )
     assert len(explanation.field_breakdown) > 0
 
 
@@ -71,9 +76,7 @@ def test_explain_with_directives_estimator():
     """
 
     explanation = explain_complexity(
-        query=query,
-        schema=schema,
-        estimator=DirectivesEstimator(schema=schema_str)
+        query=query, schema=schema, estimator=DirectivesEstimator(schema=schema_str)
     )
 
     assert explanation.estimator_name == "DirectivesEstimator"
@@ -85,7 +88,8 @@ def test_explain_with_directives_estimator():
 
 def test_explain_field_breakdown():
     """Test that field breakdown is correctly generated."""
-    schema = build_schema("""
+    schema = build_schema(
+        """
         type Query {
             user: User
         }
@@ -98,7 +102,8 @@ def test_explain_field_breakdown():
             id: ID!
             title: String!
         }
-    """)
+    """
+    )
 
     query = """
         query {
@@ -114,9 +119,7 @@ def test_explain_field_breakdown():
     """
 
     explanation = explain_complexity(
-        query=query,
-        schema=schema,
-        estimator=SimpleEstimator(complexity=1)
+        query=query, schema=schema, estimator=SimpleEstimator(complexity=1)
     )
 
     # Check that we have field explanations
@@ -127,14 +130,19 @@ def test_explain_field_breakdown():
         assert isinstance(field, FieldExplanation)
         assert field.field_name
         assert field.node_type in [
-            "Field", "ListField", "FragmentSpread", "SkippedField", "MetaField"
+            "Field",
+            "ListField",
+            "FragmentSpread",
+            "SkippedField",
+            "MetaField",
         ]
         assert field.total_complexity >= 0
 
 
 def test_explain_with_fragments():
     """Test explain_complexity with fragment spreads."""
-    schema = build_schema("""
+    schema = build_schema(
+        """
         type Query {
             user: User
         }
@@ -143,7 +151,8 @@ def test_explain_with_fragments():
             name: String!
             email: String!
         }
-    """)
+    """
+    )
 
     query = """
         query {
@@ -160,22 +169,23 @@ def test_explain_with_fragments():
     """
 
     explanation = explain_complexity(
-        query=query,
-        schema=schema,
-        estimator=SimpleEstimator(complexity=2)
+        query=query, schema=schema, estimator=SimpleEstimator(complexity=2)
     )
 
     # Should handle fragments
     assert explanation.total_complexity > 0
 
     # Check for fragment in breakdown
-    fragment_fields = [f for f in explanation.field_breakdown if f.node_type == "FragmentSpread"]
+    fragment_fields = [
+        f for f in explanation.field_breakdown if f.node_type == "FragmentSpread"
+    ]
     assert len(fragment_fields) > 0
 
 
 def test_explain_to_dict():
     """Test conversion to dictionary."""
-    schema = build_schema("""
+    schema = build_schema(
+        """
         type Query {
             user: User
         }
@@ -183,7 +193,8 @@ def test_explain_to_dict():
             id: ID!
             name: String!
         }
-    """)
+    """
+    )
 
     query = """
         query {
@@ -195,9 +206,7 @@ def test_explain_to_dict():
     """
 
     explanation = explain_complexity(
-        query=query,
-        schema=schema,
-        estimator=SimpleEstimator(complexity=5)
+        query=query, schema=schema, estimator=SimpleEstimator(complexity=5)
     )
 
     result_dict = explanation.to_dict()
@@ -226,7 +235,8 @@ def test_explain_to_dict():
 
 def test_explain_str_representation():
     """Test string representation of explanation."""
-    schema = build_schema("""
+    schema = build_schema(
+        """
         type Query {
             user: User
         }
@@ -234,7 +244,8 @@ def test_explain_str_representation():
             id: ID!
             name: String!
         }
-    """)
+    """
+    )
 
     query = """
         query {
@@ -246,9 +257,7 @@ def test_explain_str_representation():
     """
 
     explanation = explain_complexity(
-        query=query,
-        schema=schema,
-        estimator=SimpleEstimator(complexity=3)
+        query=query, schema=schema, estimator=SimpleEstimator(complexity=3)
     )
 
     str_repr = str(explanation)
@@ -263,7 +272,8 @@ def test_explain_str_representation():
 
 def test_explain_nested_query():
     """Test explain with deeply nested query."""
-    schema = build_schema("""
+    schema = build_schema(
+        """
         type Query {
             organization: Organization
         }
@@ -279,7 +289,8 @@ def test_explain_nested_query():
             id: ID!
             name: String!
         }
-    """)
+    """
+    )
 
     query = """
         query {
@@ -297,14 +308,14 @@ def test_explain_nested_query():
     """
 
     explanation = explain_complexity(
-        query=query,
-        schema=schema,
-        estimator=SimpleEstimator(complexity=1)
+        query=query, schema=schema, estimator=SimpleEstimator(complexity=1)
     )
 
     # Should have multiple levels of fields
     assert explanation.total_complexity > 0
-    assert len(explanation.field_breakdown) >= 6  # organization, id, teams, id, members, id, name
+    assert (
+        len(explanation.field_breakdown) >= 6
+    )  # organization, id, teams, id, members, id, name
 
     # Check that paths are correctly formatted
     paths = [f.field_path for f in explanation.field_breakdown]
@@ -319,7 +330,8 @@ def test_explain_list_field_multiplier():
     Note: List fields must NOT be wrapped with NonNull for proper detection.
     [User!]! won't be detected as a list, but [User] will be.
     """
-    schema = build_schema("""
+    schema = build_schema(
+        """
         type Query {
             users(first: Int): [User]
         }
@@ -327,7 +339,8 @@ def test_explain_list_field_multiplier():
             id: ID!
             name: String!
         }
-    """)
+    """
+    )
 
     query = """
         query {
@@ -339,9 +352,7 @@ def test_explain_list_field_multiplier():
     """
 
     explanation = explain_complexity(
-        query=query,
-        schema=schema,
-        estimator=SimpleEstimator(complexity=1)
+        query=query, schema=schema, estimator=SimpleEstimator(complexity=1)
     )
 
     # Find list fields
@@ -360,7 +371,8 @@ def test_explain_list_field_multiplier():
 
 def test_explain_matches_get_complexity():
     """Ensure explain_complexity returns same total as get_complexity."""
-    schema = build_schema("""
+    schema = build_schema(
+        """
         type Query {
             user(id: ID!): User
         }
@@ -373,7 +385,8 @@ def test_explain_matches_get_complexity():
             id: ID!
             title: String!
         }
-    """)
+    """
+    )
 
     query = """
         query {
@@ -394,3 +407,190 @@ def test_explain_matches_get_complexity():
     direct_complexity = get_complexity(query=query, schema=schema, estimator=estimator)
 
     assert explanation.total_complexity == direct_complexity
+
+
+def test_explain_with_custom_estimator():
+    """Test explain_complexity with a custom estimator."""
+
+    class CustomEstimator(ComplexityEstimator):
+        """A custom estimator for testing."""
+
+        def get_field_complexity(self, node: FieldNode, type_info, path) -> int:
+            if node.name.value == "user":
+                return 20
+            return 3
+
+    schema = build_schema(
+        """
+        type Query {
+            user: User
+        }
+        type User {
+            id: ID!
+            name: String!
+        }
+    """
+    )
+
+    query = """
+        query {
+            user {
+                id
+                name
+            }
+        }
+    """
+
+    explanation = explain_complexity(
+        query=query, schema=schema, estimator=CustomEstimator()
+    )
+
+    assert explanation.estimator_name == "CustomEstimator"
+    # Should have type in details for custom estimators
+    assert explanation.estimator_details["type"] == "CustomEstimator"
+    assert explanation.total_complexity > 0
+
+
+def test_explain_with_skip_directive():
+    """Test explain_complexity with @skip directive."""
+    schema = build_schema(
+        """
+        type Query {
+            user: User
+        }
+        type User {
+            id: ID!
+            name: String!
+            email: String!
+        }
+    """
+    )
+
+    query = """
+        query {
+            user {
+                id
+                name @skip(if: true)
+                email
+            }
+        }
+    """
+
+    explanation = explain_complexity(
+        query=query, schema=schema, estimator=SimpleEstimator(complexity=5)
+    )
+
+    # Find skipped fields in the breakdown
+    skipped_fields = [
+        f for f in explanation.field_breakdown if f.node_type == "SkippedField"
+    ]
+
+    assert len(skipped_fields) > 0
+
+    # Check that skipped field has zero complexity
+    for field in skipped_fields:
+        assert field.total_complexity == 0
+        assert field.field_complexity == 0
+        assert field.children_complexity == 0
+        assert "reason" in field.details
+
+
+def test_explain_with_include_directive():
+    """Test explain_complexity with @include directive."""
+    schema = build_schema(
+        """
+        type Query {
+            user: User
+        }
+        type User {
+            id: ID!
+            name: String!
+            email: String!
+        }
+    """
+    )
+
+    query = """
+        query {
+            user {
+                id
+                name @include(if: false)
+                email
+            }
+        }
+    """
+
+    explanation = explain_complexity(
+        query=query, schema=schema, estimator=SimpleEstimator(complexity=5)
+    )
+
+    # Find skipped fields
+    skipped_fields = [
+        f for f in explanation.field_breakdown if f.node_type == "SkippedField"
+    ]
+
+    assert len(skipped_fields) > 0
+
+
+def test_explain_with_typename_meta_field():
+    """Test explain_complexity with __typename meta field."""
+    schema = build_schema(
+        """
+        type Query {
+            user: User
+        }
+        type User {
+            id: ID!
+            name: String!
+        }
+    """
+    )
+
+    query = """
+        query {
+            user {
+                __typename
+                id
+                name
+            }
+        }
+    """
+
+    explanation = explain_complexity(
+        query=query, schema=schema, estimator=SimpleEstimator(complexity=5)
+    )
+
+    # Find meta fields
+    meta_fields = [f for f in explanation.field_breakdown if f.node_type == "MetaField"]
+
+    assert len(meta_fields) > 0
+
+    # Check that meta field has zero complexity
+    for field in meta_fields:
+        assert field.field_name == "__typename"
+        assert field.total_complexity == 0
+        assert field.field_complexity == 0
+        assert field.children_complexity == 0
+        assert "reason" in field.details
+
+
+def test_field_explanation_str_with_multiplier():
+    """Test FieldExplanation.__str__() with multiplier and children."""
+    field_exp = FieldExplanation(
+        field_path="users",
+        field_name="users",
+        node_type="ListField",
+        field_complexity=5,
+        children_complexity=10,
+        total_complexity=55,  # 5 + (10 * 5)
+        multiplier=5,
+    )
+
+    str_repr = str(field_exp)
+
+    # Should contain multiplier notation
+    assert "[multiplier: 5]" in str_repr
+    assert "Field complexity: 5" in str_repr
+    assert "Children complexity: 10" in str_repr
+    assert "× 5 = 50" in str_repr  # 10 × 5
+    assert "Total: 55" in str_repr
