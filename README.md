@@ -761,6 +761,87 @@ if __name__ == '__main__':
     app.run(debug=True)
 ```
 
+## 🍳 Recipes
+
+### 1. Reject a query before execution
+
+The most common pattern — block expensive queries before they hit your resolvers.
+
+```python
+from graphql_complexity import get_complexity, SimpleEstimator
+
+MAX_COMPLEXITY = 10
+
+def execute_query(schema, query):
+    complexity = get_complexity(
+        query=query,
+        schema=schema,
+        estimator=SimpleEstimator(complexity=1)
+    )
+
+    if complexity > MAX_COMPLEXITY:
+        raise Exception(f"Query too complex ({complexity}). Max allowed: {MAX_COMPLEXITY}")
+
+    return schema.execute(query)
+```
+
+-----
+
+### 2. Set different limits per user role
+
+Give trusted users more headroom without opening the door to abuse.
+
+```python
+COMPLEXITY_LIMITS = {
+    "anonymous": 5,
+    "authenticated": 15,
+    "admin": 50,
+}
+
+def execute_query(schema, query, user_role="anonymous"):
+    complexity = get_complexity(
+        query=query,
+        schema=schema,
+        estimator=SimpleEstimator(complexity=1)
+    )
+
+    limit = COMPLEXITY_LIMITS.get(user_role, 5)
+
+    if complexity > limit:
+        raise Exception(f"Query too complex ({complexity}). Max allowed for {user_role}: {limit}")
+
+    return schema.execute(query)
+```
+
+-----
+
+### 3. Log complexity without blocking
+
+Useful when rolling out complexity limits gradually — monitor first, enforce later.
+
+```python
+import logging
+from graphql_complexity import get_complexity, SimpleEstimator
+
+logger = logging.getLogger(__name__)
+WARN_THRESHOLD = 10
+
+def execute_query(schema, query):
+    complexity = get_complexity(
+        query=query,
+        schema=schema,
+        estimator=SimpleEstimator(complexity=1)
+    )
+
+    if complexity > WARN_THRESHOLD:
+        logger.warning(f"High complexity query detected: {complexity}")
+
+    # Always execute — no blocking yet
+    return schema.execute(query)
+```
+
+> **Tip:** Use this pattern in production for a week to understand your traffic’s complexity distribution before choosing your enforcement threshold.
+
 ## Real-World Use Cases
 
 ### E-commerce Platform
