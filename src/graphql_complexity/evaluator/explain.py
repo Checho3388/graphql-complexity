@@ -3,17 +3,22 @@
 This module provides functionality to explain how complexity calculations are performed,
 including which estimator was used and a detailed breakdown of the calculation.
 """
-import dataclasses
-from typing import Any
+from __future__ import annotations
 
-from graphql import GraphQLSchema, TypeInfo, TypeInfoVisitor, parse, visit
+import dataclasses
+from typing import TYPE_CHECKING, Any
+
+from graphql import TypeInfo, TypeInfoVisitor, parse, visit
 
 from . import nodes
 from .visitor import ComplexityVisitor
-from ..config import Config
-from ..estimators import ComplexityEstimator
 from ..estimators.simple import SimpleEstimator
 from ..estimators.directive import DirectivesEstimator
+
+if TYPE_CHECKING:
+    from graphql import GraphQLSchema
+    from ..config import Config
+    from ..estimators import ComplexityEstimator
 
 
 @dataclasses.dataclass

@@ -1,17 +1,20 @@
-from typing import Any
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
 
 from graphql import (
-    DirectiveNode,
     GraphQLIncludeDirective,
     GraphQLSkipDirective,
-    TypeInfo,
-    Visitor
+    Visitor,
 )
 
 from graphql_complexity.estimators.base import ComplexityEstimator
 from . import nodes
 from .utils import get_node_argument_value
 from ..config import Config
+
+if TYPE_CHECKING:
+    from graphql import DirectiveNode, TypeInfo
 
 
 class ComplexityVisitor(Visitor):

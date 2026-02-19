@@ -1,10 +1,15 @@
-from typing import Type
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from graphql import GraphQLError
 from strawberry.extensions import SchemaExtension
 
 from graphql_complexity import get_complexity
-from graphql_complexity.estimators import ComplexityEstimator
+
+if TYPE_CHECKING:
+    from typing import Type
+    from graphql_complexity.estimators import ComplexityEstimator
 
 
 def build_complexity_extension(

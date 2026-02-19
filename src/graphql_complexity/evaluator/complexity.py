@@ -1,11 +1,17 @@
+from __future__ import annotations
+
 from functools import lru_cache
+from typing import TYPE_CHECKING
 
-from graphql import DocumentNode, GraphQLSchema, TypeInfo, TypeInfoVisitor, parse, visit
+from graphql import DocumentNode, TypeInfo, TypeInfoVisitor, parse, visit
 
-from . import nodes
 from .visitor import ComplexityVisitor
-from ..config import Config
-from ..estimators import ComplexityEstimator
+
+if TYPE_CHECKING:
+    from graphql import GraphQLSchema
+    from . import nodes
+    from ..config import Config
+    from ..estimators import ComplexityEstimator
 
 
 @lru_cache(maxsize=256)

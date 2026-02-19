@@ -1,15 +1,16 @@
+from __future__ import annotations
+
 import dataclasses
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from graphql import (
-    GraphQLList,
-    TypeInfo,
-    FieldNode,
-)
+from graphql import GraphQLList
 
-from graphql_complexity.config import Config
 from graphql_complexity.evaluator.utils import get_node_argument_value, is_meta_type
+
+if TYPE_CHECKING:
+    from graphql import FieldNode, TypeInfo
+    from graphql_complexity.config import Config
 
 logger = logging.getLogger(__name__)
 

@@ -1,12 +1,15 @@
-from typing import Any
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
 
 from graphql import (
-    DirectiveNode,
-    FieldNode,
     VariableNode,
     get_named_type,
     is_introspection_type,
 )
+
+if TYPE_CHECKING:
+    from graphql import DirectiveNode, FieldNode
 
 
 def get_node_argument_value(node: FieldNode | DirectiveNode, arg_name: str, variables: dict[str, Any]) -> Any:
