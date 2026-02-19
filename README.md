@@ -15,7 +15,7 @@ Welcome to GraphQL-Complexity! This Python library provides functionality to com
 
 Protect your GraphQL API from expensive queries and potential DoS attacks by calculating query complexity before execution.
 
-**5,500+ downloads** • **Used in production** • **Actively maintained**
+Watch the library live in our demo playground [here](https://graphql-complexity-playground-production.up.railway.app/) .
 
 ## Features
 
