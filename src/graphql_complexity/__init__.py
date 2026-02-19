@@ -2,9 +2,10 @@ from graphql_complexity.evaluator.complexity import get_complexity
 from graphql_complexity.evaluator.explain import explain_complexity, ExplanationResult, FieldExplanation
 
 from .estimators import (
+    ArgumentsEstimator,
     ComplexityEstimator,
     DirectivesEstimator,
-    SimpleEstimator
+    SimpleEstimator,
 )
 
 __all__ = [
@@ -12,7 +13,8 @@ __all__ = [
     "explain_complexity",
     "ExplanationResult",
     "FieldExplanation",
-    "SimpleEstimator",
+    "ArgumentsEstimator",
     "ComplexityEstimator",
     "DirectivesEstimator",
+    "SimpleEstimator",
 ]

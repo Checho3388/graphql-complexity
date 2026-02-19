@@ -31,6 +31,7 @@ Protect your GraphQL API from expensive queries and potential DoS attacks by cal
 * [Estimators](#estimators)
   * [SimpleEstimator](#simpleestimator)
   * [DirectivesEstimator](#directivesestimator)
+  * [ArgumentsEstimator](#argumentsestimator)
   * [Custom Estimator](#custom-estimator)
 * [Advanced Examples](#advanced-examples)
   * [Handling Fragments](#handling-fragments)
@@ -254,6 +255,52 @@ type Query {
 estimator = DirectivesEstimator(schema)
 ```
 
+### ArgumentsEstimator
+
+Estimate complexity by multiplying a base value by a numeric argument (e.g. `limit`, `first`, `ids`).
+This is useful when your API exposes pagination or batch arguments that directly drive the cost of a field.
+
+- **Int argument** — the integer value is used as the multiplier (`limit: 10` → ×10).
+- **List argument** — the length of the list is used as the multiplier (`ids: ["a","b","c"]` → ×3).
+- **No matching argument** — the field gets `default_complexity` (multiplier of 1).
+
+```python
+from graphql_complexity import ArgumentsEstimator, get_complexity
+from graphql import build_schema
+
+schema = build_schema("""
+    type Query {
+        users(limit: Int): [User!]!
+        usersByIds(ids: [ID!]): [User!]!
+    }
+    type User {
+        id: ID!
+        name: String!
+    }
+""")
+
+estimator = ArgumentsEstimator(
+    multipliers=["limit", "ids"],
+    default_complexity=1,
+)
+
+# users(limit: 50) → complexity 50
+complexity = get_complexity(
+    query="query { users(limit: 50) { id name } }",
+    schema=schema,
+    estimator=estimator,
+)
+print(complexity)  # 52  (users=50, id=1, name=1)
+
+# usersByIds(ids: ["a","b","c"]) → complexity 3
+complexity = get_complexity(
+    query='query { usersByIds(ids: ["a", "b", "c"]) { id } }',
+    schema=schema,
+    estimator=estimator,
+)
+print(complexity)  # 4  (usersByIds=3, id=1)
+```
+
 ### Custom estimator
 
 Custom estimators can be defined to compute the complexity of a field using the `ComplexityEstimator` interface.
@@ -410,12 +457,11 @@ if complexity > MAX_COMPLEXITY:
 
 ### Working with Arguments
 
-Field arguments can significantly impact query complexity, especially with pagination:
+Field arguments can significantly impact query complexity, especially with pagination. The built-in `ArgumentsEstimator` handles the common case where a numeric argument (like `first` or `limit`) or a list argument (like `ids`) directly drives the cost of a field:
 
 ```python
-from graphql_complexity import ComplexityEstimator, get_complexity
-from graphql import build_schema, FieldNode
-from graphql.language import ast
+from graphql_complexity import ArgumentsEstimator, get_complexity
+from graphql import build_schema
 
 schema = build_schema("""
     type Product {
@@ -423,37 +469,14 @@ schema = build_schema("""
         name: String!
         price: Float!
     }
-    
+
     type Query {
         products(first: Int, offset: Int): [Product!]!
         product(id: ID!): Product
     }
 """)
 
-class ArgumentAwareEstimator(ComplexityEstimator):
-    """Custom estimator that considers pagination arguments"""
-    
-    def get_field_complexity(self, node: FieldNode, type_info, path) -> int:
-        field_name = node.name.value
-        
-        # Base complexity
-        base_complexity = 1
-        
-        # Check for list/pagination arguments
-        if node.arguments:
-            for arg in node.arguments:
-                if arg.name.value == "first":
-                    # Extract the limit value
-                    if isinstance(arg.value, ast.IntValue):
-                        limit = int(arg.value.value)
-                        # Multiply complexity by the number of items requested
-                        base_complexity *= min(limit, 100)  # Cap at 100
-        
-        # Apply higher base cost for lists
-        if field_name == "products":
-            base_complexity *= 5
-        
-        return base_complexity
+estimator = ArgumentsEstimator(multipliers=["first"], default_complexity=1)
 
 query = """
     query GetProducts {
@@ -465,13 +488,12 @@ query = """
     }
 """
 
-complexity = get_complexity(
-    query=query,
-    schema=schema,
-    estimator=ArgumentAwareEstimator()
-)
+complexity = get_complexity(query=query, schema=schema, estimator=estimator)
 print(f"Query complexity with pagination: {complexity}")
+# products(first: 50) → 50, id/name/price → 1 each → total: 53
 ```
+
+For more fine-grained control (e.g. capping limits or applying field-specific multipliers), use a [Custom Estimator](#custom-estimator) instead.
 
 ### Combining Multiple Estimators
 
