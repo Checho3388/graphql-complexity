@@ -3,4 +3,4 @@ exclude_paths:
   - 'CHANGELOG.md'
   - 'README.md'
   - 'docs/**/*.md'
-  - 'tests/**/*'
+  - 'tests/**'
