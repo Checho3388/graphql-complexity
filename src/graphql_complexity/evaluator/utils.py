@@ -22,9 +22,19 @@ def get_node_argument_value(node: FieldNode | DirectiveNode, arg_name: str, vari
 
 
 def is_meta_type(type_, node) -> bool:
-    """Check if the field is a meta field."""
+    """Return True if the field is a GraphQL meta field (__typename or introspection).
+
+    Two cheap short-circuit checks run before the more expensive get_named_type /
+    is_introspection_type calls:
+      1. Exact match on "__typename" — the most common meta field.
+      2. Prefix check on "__" — all meta fields share this prefix, so anything
+         else can be rejected immediately without touching the type system.
+    """
+    name = node.name.value
+    if name == "__typename":
+        return True
+    if not name.startswith("__"):
+        return False
+
     unwrapped_type = get_named_type(type_)
-    return (
-        unwrapped_type is not None and is_introspection_type(unwrapped_type)
-        or unwrapped_type is not None and node.name.value == "__typename"
-    )
+    return unwrapped_type is not None and is_introspection_type(unwrapped_type)
