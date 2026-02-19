@@ -1,0 +1,58 @@
+name: Benchmarks
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  benchmark:
+    permissions:
+      contents: write
+      pull-requests: write
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: "1.7.1"
+
+      - uses: actions/cache@v3
+        name: Cache virtual environment
+        with:
+          path: ./.venv
+          key: venv-bench-${{ hashFiles('poetry.lock') }}
+
+      - name: Install the project dependencies
+        run: poetry install --extras "strawberry-graphql"
+
+      - name: Run benchmarks
+        run: |
+          poetry run pytest tests/benchmarks/ \
+            --benchmark-json=benchmark-output.json \
+            --benchmark-only \
+            -q
+
+      - name: Store and compare benchmark results
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: pytest
+          output-file-path: benchmark-output.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Push results to the gh-pages branch only on main
+          auto-push: ${{ github.ref == 'refs/heads/main' }}
+          # Always comment on PRs with the comparison table
+          comment-always: true
+          # Alert and fail the check if any benchmark regresses more than 15%
+          comment-on-alert: true
+          alert-threshold: "115%"
+          fail-on-alert: true
