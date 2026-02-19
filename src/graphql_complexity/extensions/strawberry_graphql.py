@@ -18,7 +18,7 @@ def build_complexity_extension(
             self,
         ):
             self.estimated_complexity = get_complexity(
-                query=self.execution_context.query,
+                query=self.execution_context.graphql_document,
                 schema=self.execution_context.schema._schema,
                 estimator=estimator
             )

@@ -24,9 +24,7 @@ def get_node_argument_value(node: FieldNode | DirectiveNode, arg_name: str, vari
 def is_meta_type(type_, node) -> bool:
     """Check if the field is a meta field."""
     unwrapped_type = get_named_type(type_)
-    return any(
-        (
-            unwrapped_type is not None and is_introspection_type(unwrapped_type),
-            unwrapped_type is not None and node.name.value == "__typename",
-        )
+    return (
+        unwrapped_type is not None and is_introspection_type(unwrapped_type)
+        or unwrapped_type is not None and node.name.value == "__typename"
     )

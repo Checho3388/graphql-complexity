@@ -1,4 +1,6 @@
-from graphql import GraphQLSchema, TypeInfo, TypeInfoVisitor, parse, visit
+from functools import lru_cache
+
+from graphql import DocumentNode, GraphQLSchema, TypeInfo, TypeInfoVisitor, parse, visit
 
 from . import nodes
 from .visitor import ComplexityVisitor
@@ -6,7 +8,12 @@ from ..config import Config
 from ..estimators import ComplexityEstimator
 
 
-def get_complexity(query: str, schema: GraphQLSchema, estimator: ComplexityEstimator, config: Config = None) -> int:
+@lru_cache(maxsize=256)
+def _parse_cached(query: str) -> DocumentNode:
+    return parse(query)
+
+
+def get_complexity(query: str | DocumentNode, schema: GraphQLSchema, estimator: ComplexityEstimator, config: Config = None) -> int:
     """Calculate the complexity of a query using the provided estimator."""
     tree = build_complexity_tree(query, schema, estimator, config)
 
@@ -14,13 +21,13 @@ def get_complexity(query: str, schema: GraphQLSchema, estimator: ComplexityEstim
 
 
 def build_complexity_tree(
-        query: str,
+        query: str | DocumentNode,
         schema: GraphQLSchema,
         estimator: ComplexityEstimator,
         config: Config | None = None,
 ) -> nodes.ComplexityNode:
     """Calculate the complexity of a query using the provided estimator."""
-    ast = parse(query)
+    ast = query if isinstance(query, DocumentNode) else _parse_cached(query)
     type_info = TypeInfo(schema)
 
     visitor = ComplexityVisitor(estimator=estimator, type_info=type_info, config=config)
