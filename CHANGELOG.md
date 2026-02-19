@@ -5,10 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.0] - 2026-02-19
+
+This release introduces argument-aware complexity estimation and improved developer tooling.
 
 ### Added
-- `ArgumentsEstimator`: a new built-in estimator that multiplies field complexity by a numeric argument value (e.g. `limit: 10`) or by the length of a list argument (e.g. `ids: ["a","b","c"]`). Useful for APIs with pagination or batch arguments.
+
+- **`ArgumentsEstimator`**: a new built-in estimator that multiplies field complexity by a numeric argument value (e.g. `limit: 10`) or by the length of a list argument (e.g. `ids: ["a", "b", "c"]`). Particularly useful for APIs with pagination or batch-style arguments where the cost of a field scales with its inputs.
+
+- **`explain` command**: a new utility that prints a detailed breakdown of the complexity calculation, making it easier to understand how the final score is computed and to debug estimator behavior.
+
+- **Benchmark tests**: a benchmarking suite to track performance across releases and catch regressions early. This ensures the library stays fast as new features are added.
+
+- **Playground link in README**: added a link to an interactive playground so new users can explore the library without any local setup.
+
+### Breaking Changes
+
+None.
 
 ## [0.4.2] - 2026-02-10
 

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "graphql_complexity"
-version = "0.4.2"
+version = "1.0.0"
 description = "A python library that provides complexity calculation helpers for GraphQL"
 authors = ["Checho3388 <ezequiel.grondona@gmail.com>"]
 packages = [
@@ -10,7 +10,7 @@ repository = "https://github.com/Checho3388/graphql-complexity"
 license = "MIT"
 readme = "README.md"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "License :: OSI Approved :: MIT License",
