@@ -25,18 +25,18 @@ keywords = ["graphql", "complexity", "query", "mutation", "subscription"]
 [tool.poetry.dependencies]
 python = "^3.10"
 graphql-core = "^3.2.3"
-strawberry-graphql = "^0.291.3"
+strawberry-graphql = ">=0.291.3,<0.299.0"
 
 [tool.poetry.extras]
 strawberry-graphql = ["strawberry-graphql"]
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.0.0"
+pytest = ">=8,<10"
 mypy = "^1.8.0"
-black = "^24.2.0"
-pytest-cov = "^4.1.0"
+black = ">=24.2,<27.0"
+pytest-cov = ">=4.1,<8.0"
 flake8 = "^7.0.0"
-pytest-benchmark = "^4.0.0"
+pytest-benchmark = ">=4,<6"
 
 [build-system]
 requires = ["poetry-core"]
