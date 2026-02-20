@@ -60,11 +60,11 @@ if complexity > 10:
 | `ArgumentsEstimator` | Multiplies cost by a numeric/list argument (e.g. `limit`, `ids`) |
 | Custom | Subclass `ComplexityEstimator` and implement `get_field_complexity` |
 
-See the [estimators docs](https://graphql-complexity.readthedocs.io/guides/estimators.html) for full reference and examples.
+See the [estimators docs](https://graphql-complexity.readthedocs.io/en/latest/guides/estimators.html) for full reference and examples.
 
 ## Integrations
 
-See the [integrations docs](https://graphql-complexity.readthedocs.io/guides/integrations.html) for examples
+See the [integrations docs](https://graphql-complexity.readthedocs.io/en/latest/guides/integrations.html) for examples
 about how this library integrates with `strawberry`, `FastAPI`, `Flask` and `graphene-django`.
 
 
