@@ -728,15 +728,15 @@ files = [
 
 [[package]]
 name = "strawberry-graphql"
-version = "0.298.0"
+version = "0.307.1"
 description = "A library for creating GraphQL APIs"
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
 markers = "extra == \"strawberry-graphql\""
 files = [
-    {file = "strawberry_graphql-0.298.0-py3-none-any.whl", hash = "sha256:2b7f863ecd2a4b57e4b740d1e82099699d03e01b26fe02d3f4234cba6db77493"},
-    {file = "strawberry_graphql-0.298.0.tar.gz", hash = "sha256:33c2ed1e66abc605e1c1b16f09f451a25a0ce0078083af8910183e57a1831439"},
+    {file = "strawberry_graphql-0.307.1-py3-none-any.whl", hash = "sha256:7eca104e81d0108435326ee60a3c3c2e498f73949898ec7a4f274c0de283149b"},
+    {file = "strawberry_graphql-0.307.1.tar.gz", hash = "sha256:924d94e0218fbce081d6661a659bbd1f9b5bd02b9462e18bc46c203b4babbebe"},
 ]
 
 [package.dependencies]
@@ -753,7 +753,6 @@ chalice = ["chalice (>=1.22)"]
 channels = ["asgiref (>=3.2)", "channels (>=3.0.5)"]
 cli = ["libcst", "pygments (>=2.3)", "python-multipart (>=0.0.7)", "rich (>=12.0.0)", "starlette (>=0.18.0)", "typer (>=0.12.4)", "uvicorn (>=0.11.6)", "websockets (>=15.0.1,<16)"]
 debug = ["libcst", "rich (>=12.0.0)"]
-debug-server = ["libcst", "pygments (>=2.3)", "python-multipart (>=0.0.7)", "rich (>=12.0.0)", "starlette (>=0.18.0)", "typer (>=0.12.4)", "uvicorn (>=0.11.6)", "websockets (>=15.0.1,<16)"]
 django = ["Django (>=3.2)", "asgiref (>=3.2)"]
 fastapi = ["fastapi (>=0.65.2)", "python-multipart (>=0.0.7)"]
 flask = ["flask (>=1.1)"]
@@ -796,4 +795,4 @@ strawberry-graphql = ["strawberry-graphql"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "80058e2e95923dbcf819f5ddf2637dca0b731a988963b7d82a587c4fe2ac815a"
+content-hash = "e2068cb2519ce159527d617d4fe3d5a7f6b535509821f066eb46906996585128"
