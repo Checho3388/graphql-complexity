@@ -624,14 +624,14 @@ histogram = ["pygal", "pygaljs", "setuptools"]
 
 [[package]]
 name = "pytest-cov"
-version = "7.0.0"
+version = "7.1.0"
 description = "Pytest plugin for measuring coverage."
 optional = false
 python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "pytest_cov-7.0.0-py3-none-any.whl", hash = "sha256:3b8e9558b16cc1479da72058bdecf8073661c7f57f7d3c5f22a1c23507f2d861"},
-    {file = "pytest_cov-7.0.0.tar.gz", hash = "sha256:33c97eda2e049a0c5298e91f519302a1334c26ac65c1a483d6206fd458361af1"},
+    {file = "pytest_cov-7.1.0-py3-none-any.whl", hash = "sha256:a0461110b7865f9a271aa1b51e516c9a95de9d696734a2f71e3e78f46e1d4678"},
+    {file = "pytest_cov-7.1.0.tar.gz", hash = "sha256:30674f2b5f6351aa09702a9c8c364f6a01c27aae0c1366ae8016160d1efc56b2"},
 ]
 
 [package.dependencies]
@@ -728,15 +728,15 @@ files = [
 
 [[package]]
 name = "strawberry-graphql"
-version = "0.311.3"
+version = "0.312.2"
 description = "A library for creating GraphQL APIs"
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
 markers = "extra == \"strawberry-graphql\""
 files = [
-    {file = "strawberry_graphql-0.311.3-py3-none-any.whl", hash = "sha256:c63e4a98190f898ef6c321bb6628bcbfeab98cc7521779b222bfad889d8c17b6"},
-    {file = "strawberry_graphql-0.311.3.tar.gz", hash = "sha256:04801aa9540812c3b0ad629de777346908d8c486b0e21c6342b4bafa64c42daa"},
+    {file = "strawberry_graphql-0.312.2-py3-none-any.whl", hash = "sha256:fac534323c9fe57600c3ce6f64d02e6bd0a0b8c5e865ef07c061060fc9a46923"},
+    {file = "strawberry_graphql-0.312.2.tar.gz", hash = "sha256:e545681441842a64203bb78010e6a56737340da5022864da3df58602a718fb2b"},
 ]
 
 [package.dependencies]
@@ -795,4 +795,4 @@ strawberry-graphql = ["strawberry-graphql"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "8c2fc52b796daf4a319e60cca9875cf59bb686f23f7180d5b84797f29f929664"
+content-hash = "e98ac428854ba40e13dd561659525e1764958e6dc5781cdc10dc48e9efe3aac8"
