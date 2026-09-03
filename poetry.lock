@@ -321,14 +321,14 @@ pyflakes = ">=3.4.0,<3.5.0"
 
 [[package]]
 name = "graphql-core"
-version = "3.2.11"
+version = "3.2.12"
 description = "GraphQL implementation for Python, a port of GraphQL.js, the JavaScript reference implementation for GraphQL."
 optional = false
 python-versions = "<4,>=3.7"
 groups = ["main"]
 files = [
-    {file = "graphql_core-3.2.11-py3-none-any.whl", hash = "sha256:0b3e35ff41e9adba53021ab0cef475eb18f57c7f53f0f2ca55567fbf3c537ea0"},
-    {file = "graphql_core-3.2.11.tar.gz", hash = "sha256:e7e156d10beb127cab5c89ff0da71416fc73d27c484a4757d3b2d35633774802"},
+    {file = "graphql_core-3.2.12-py3-none-any.whl", hash = "sha256:3d8f104532070485e13caa4092c1e71cda2ba6cffd96e98f285111ee10ed1e51"},
+    {file = "graphql_core-3.2.12.tar.gz", hash = "sha256:4579094d5fc8a1a59555a9b18e51b320779d9bbc63e2302c519af0c4919d9543"},
 ]
 
 [[package]]
@@ -860,15 +860,15 @@ files = [
 
 [[package]]
 name = "strawberry-graphql"
-version = "0.324.0"
+version = "0.325.0"
 description = "A library for creating GraphQL APIs"
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
 markers = "extra == \"strawberry-graphql\""
 files = [
-    {file = "strawberry_graphql-0.324.0-py3-none-any.whl", hash = "sha256:08c8b3256a1c909c7721f3c1d8e161ac40505ca14991c39d8492898b17e77b6d"},
-    {file = "strawberry_graphql-0.324.0.tar.gz", hash = "sha256:4eb6decf0c33524374f24e07ff6d1915da26655a49fa6f656544c293404e2d35"},
+    {file = "strawberry_graphql-0.325.0-py3-none-any.whl", hash = "sha256:bf1571b5b9ec9e728317b9369c7a070d15c7275034cff92d32c5813b1753b5bc"},
+    {file = "strawberry_graphql-0.325.0.tar.gz", hash = "sha256:432c70fbaf91bd0721cffdaaed933ef32101975296eab7b874218db0c4e9b679"},
 ]
 
 [package.dependencies]
@@ -884,8 +884,8 @@ apollo-federation = ["protobuf (>=3.20)"]
 asgi = ["python-multipart (>=0.0.7)", "starlette (>=0.18.0)"]
 chalice = ["chalice (>=1.22)"]
 channels = ["asgiref (>=3.2)", "channels (>=4.0.0)", "django (>=5.2)"]
-cli = ["libcst", "pygments (>=2.3)", "python-multipart (>=0.0.7)", "rich (>=12.0.0)", "starlette (>=0.18.0)", "typer (>=0.12.4)", "uvicorn (>=0.11.6)", "websockets (>=15.0.1,<17)"]
-debug = ["libcst", "rich (>=12.0.0)"]
+cli = ["libcst (>=1.9.0)", "pygments (>=2.3)", "python-multipart (>=0.0.7)", "rich (>=12.0.0)", "starlette (>=0.18.0)", "typer (>=0.12.4)", "uvicorn (>=0.11.6)", "websockets (>=15.0.1,<17)"]
+debug = ["libcst (>=1.9.0)", "rich (>=12.0.0)"]
 django = ["asgiref (>=3.2)", "django (>=5.2)"]
 fastapi = ["fastapi (>=0.65.2)", "python-multipart (>=0.0.7)"]
 flask = ["flask (>=1.1)"]
@@ -928,4 +928,4 @@ strawberry-graphql = ["strawberry-graphql"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "1cbad75757ae35ab3e28e42f4fdb05e4c26a0c1abaddacb4f1ba29ada82b98f8"
+content-hash = "f46ff10b46b0ad66ea3d969c2494e8a964c22f190b717692c5e0daba547fff33"
