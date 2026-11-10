@@ -16,11 +16,11 @@ class DirectivesVisitor(Visitor):
         super().__init__()
 
     def enter_field_definition(self, node, key, parent, path, ancestors):
-        for directive in node.directives:
+        for directive in node.directives or ():
             if directive.name.value == self.directive_name:
                 complexity = next(
                     arg.value.value
-                    for arg in directive.arguments
+                    for arg in directive.arguments or ()
                     if arg.name.value == DIRECTIVE_ESTIMATOR_FIELD_COMPLEXITY_NAME
                 )
                 self._collector[node.name.value] = int(complexity)
