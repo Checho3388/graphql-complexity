@@ -1,9 +1,5 @@
 .. graphql-complexity documentation master file
 
-.. image:: https://github.com/Checho3388/graphql-complexity/raw/main/.github/logo.png
-   :alt: graphql-complexity logo
-   :align: center
-
 |
 
 GraphQL Complexity
@@ -57,6 +53,4 @@ GraphQL APIs from expensive or malicious queries.
    :maxdepth: 1
    :caption: Project Info
 
-   guides/changelog
    guides/contributing
-   guides/license

@@ -62,7 +62,7 @@ Fields without the directive receive a default cost of `1`.
 
 You must include the directive definition in your schema:
 
-```graphql
+```
 directive @complexity(
   value: Int!
 ) on FIELD_DEFINITION
@@ -209,21 +209,3 @@ complexity = get_complexity(
 )
 print(complexity)  # 1
 ```
-
----
-
-## Choosing an Estimator
-
-| Use Case | Recommended Estimator |
-|---|---|
-| Simple uniform pricing per field | `SimpleEstimator` |
-| Different costs per field, controlled in schema | `DirectivesEstimator` |
-| Pricing based on pagination / list size arguments | `ArgumentsEstimator` |
-| Programmatic or dynamic pricing logic | [Custom Estimator](custom_estimators.md) |
-
----
-
-## Credits
-
-The estimator concept was inspired by
-[graphql-query-complexity](https://github.com/slicknode/graphql-query-complexity).
