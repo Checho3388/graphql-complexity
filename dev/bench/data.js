@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1794352593086,
+  "lastUpdate": 1794388992164,
   "repoUrl": "https://github.com/Checho3388/graphql-complexity",
   "entries": {
     "Benchmark": [
@@ -1512,6 +1512,114 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.001316441300232981",
             "extra": "mean: 5.928831604650977 msec\nrounds: 172"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ezequiel.grondona@gmail.com",
+            "name": "Cheche",
+            "username": "Checho3388"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6058b71083282126d84500c2872c5c734d9ceb6f",
+          "message": "Merge pull request #35 from Checho3388/dependabot/pip/python-packages-1ca550a36c\n\nchore(deps-python): bump the python-packages group across 1 directory with 6 updates",
+          "timestamp": "2026-11-11T06:22:32-03:00",
+          "tree_id": "51bda561421d9e4bb40a449586bb3583908e7cea",
+          "url": "https://github.com/Checho3388/graphql-complexity/commit/6058b71083282126d84500c2872c5c734d9ceb6f"
+        },
+        "date": 1794388991454,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/benchmarks/test_benchmark_strawberry_extension.py::test_without_extension_simple_query",
+            "value": 1397.01931606169,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0007402354290452051",
+            "extra": "mean: 715.8097160883076 usec\nrounds: 951"
+          },
+          {
+            "name": "tests/benchmarks/test_benchmark_strawberry_extension.py::test_without_extension_complex_query",
+            "value": 552.9441565329922,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0007985940940279503",
+            "extra": "mean: 1.8085008914283256 msec\nrounds: 525"
+          },
+          {
+            "name": "tests/benchmarks/test_benchmark_strawberry_extension.py::test_without_extension_deep_query",
+            "value": 219.53730718703062,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0018128710852155895",
+            "extra": "mean: 4.555034462311543 msec\nrounds: 199"
+          },
+          {
+            "name": "tests/benchmarks/test_benchmark_strawberry_extension.py::test_simple_estimator_simple_query",
+            "value": 1231.0491242878725,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0007810543256446193",
+            "extra": "mean: 812.3152685547558 usec\nrounds: 1024"
+          },
+          {
+            "name": "tests/benchmarks/test_benchmark_strawberry_extension.py::test_simple_estimator_complex_query",
+            "value": 470.46389387549016,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0009582904501532985",
+            "extra": "mean: 2.1255616276148355 msec\nrounds: 478"
+          },
+          {
+            "name": "tests/benchmarks/test_benchmark_strawberry_extension.py::test_simple_estimator_deep_query",
+            "value": 196.4392729841569,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0024949054766605005",
+            "extra": "mean: 5.0906317499996625 msec\nrounds: 188"
+          },
+          {
+            "name": "tests/benchmarks/test_benchmark_strawberry_extension.py::test_directives_estimator_simple_query",
+            "value": 1206.7983575360659,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0009749160267774142",
+            "extra": "mean: 828.6388473727388 usec\nrounds: 1199"
+          },
+          {
+            "name": "tests/benchmarks/test_benchmark_strawberry_extension.py::test_directives_estimator_complex_query",
+            "value": 459.70807401679406,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0010033469583502293",
+            "extra": "mean: 2.1752935319632174 msec\nrounds: 438"
+          },
+          {
+            "name": "tests/benchmarks/test_benchmark_strawberry_extension.py::test_directives_estimator_deep_query",
+            "value": 198.32869910649782,
+            "unit": "iter/sec",
+            "range": "stddev: 0.002010210309705912",
+            "extra": "mean: 5.042134620481847 msec\nrounds: 166"
+          },
+          {
+            "name": "tests/benchmarks/test_benchmark_strawberry_extension.py::test_arguments_estimator_simple_query",
+            "value": 1232.7426629563952,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0007151751045029589",
+            "extra": "mean: 811.1993119486707 usec\nrounds: 1247"
+          },
+          {
+            "name": "tests/benchmarks/test_benchmark_strawberry_extension.py::test_arguments_estimator_complex_query",
+            "value": 475.14162879124643,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0008095724873843749",
+            "extra": "mean: 2.104635627368593 msec\nrounds: 475"
+          },
+          {
+            "name": "tests/benchmarks/test_benchmark_strawberry_extension.py::test_arguments_estimator_deep_query",
+            "value": 196.11596892627506,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0019525602484637779",
+            "extra": "mean: 5.09902383510608 msec\nrounds: 188"
           }
         ]
       }
